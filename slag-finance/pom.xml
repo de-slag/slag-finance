@@ -20,15 +20,27 @@
 	</modules>
 	<dependencyManagement>
 		<dependencies>
+
+			<dependency>
+				<groupId>de.slag.common</groupId>
+				<artifactId>slag-common-utils</artifactId>
+				<version>${slag-common-version}</version>
+			</dependency>
 			<dependency>
 				<groupId>de.slag.common</groupId>
 				<artifactId>slag-common-base</artifactId>
 				<version>${slag-common-version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>de.slag.common</groupId>
 				<artifactId>slag-common-context</artifactId>
+				<version>${slag-common-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>de.slag.common</groupId>
+				<artifactId>slag-common-logging</artifactId>
 				<version>${slag-common-version}</version>
 			</dependency>
 		</dependencies>
