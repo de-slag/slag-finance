@@ -1,15 +1,36 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>de.slag.root</groupId>
-    <artifactId>slag-root</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-  <groupId>de.slag.finance</groupId>
-  <artifactId>slag-finance</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <modules>
-  	<module>slag-finance-logic</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.slag.root</groupId>
+		<artifactId>slag-root</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>de.slag.finance</groupId>
+	<artifactId>slag-finance</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<properties>
+		<slag-common-version>0.0.1-SNAPSHOT</slag-common-version>
+	</properties>
+	<modules>
+		<module>slag-finance-logic</module>
+		<module>slag-finance-app</module>
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>de.slag.common</groupId>
+				<artifactId>slag-common-base</artifactId>
+				<version>${slag-common-version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>de.slag.common</groupId>
+				<artifactId>slag-common-context</artifactId>
+				<version>${slag-common-version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
