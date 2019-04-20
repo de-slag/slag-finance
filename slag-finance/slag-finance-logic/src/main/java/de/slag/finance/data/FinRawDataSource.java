@@ -6,6 +6,6 @@ import de.slag.finance.data.model.FinRawDataHolder;
 
 public interface FinRawDataSource<T> {
 	
-	Collection<FinRawDataHolder<T>> findAll();
+	Collection<T> findAll();
 
 }

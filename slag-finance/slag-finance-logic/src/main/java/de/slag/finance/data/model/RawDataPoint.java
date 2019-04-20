@@ -9,8 +9,6 @@ public class RawDataPoint {
 	
 	private LocalDate date;
 	
-	private KPI kpi;
-	
 	private BigDecimal value;
 
 	public String getIsin() {
@@ -29,14 +27,6 @@ public class RawDataPoint {
 		this.date = date;
 	}
 
-	public KPI getKpi() {
-		return kpi;
-	}
-
-	public void setKpi(KPI kpi) {
-		this.kpi = kpi;
-	}
-
 	public BigDecimal getValue() {
 		return value;
 	}
@@ -44,5 +34,12 @@ public class RawDataPoint {
 	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
+
+	@Override
+	public String toString() {
+		return "RawDataPoint [isin=" + isin + ", date=" + date + ", value=" + value + "]";
+	}
+	
+	
 
 }
