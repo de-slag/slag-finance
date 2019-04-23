@@ -58,6 +58,10 @@ public class RawDataSource implements FinRawDataSource<RawDataPoint> {
 
 		final String financeWorkdir = finProperties.getFinanceWorkdir();
 		final File dir = new File(financeWorkdir);
+		if (!dir.exists()) {
+			throw new BaseException("dir not exists: " + financeWorkdir);
+		}
+
 		final String property = finProperties.getProperty(Constants.RAW_DATA_POSTFIX);
 
 		final File[] listFiles = dir.listFiles((currentdir, filename) -> {
