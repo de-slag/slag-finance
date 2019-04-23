@@ -25,7 +25,8 @@ public class RawDataTest {
 	public void test() throws IOException {
 
 		final String filename = "test-data.raw.csv";
-		final Collection<CSVRecord> records = CsvUtils.getRecords(ResourceUtils.getAbsolutePathFromResources(filename));
+		final String absolutePathFromResources = ResourceUtils.getFileFromResources(filename).getAbsolutePath();
+		final Collection<CSVRecord> records = CsvUtils.getRecords(absolutePathFromResources);
 		Assert.assertTrue(!records.isEmpty());
 		
 		records.forEach(record -> LOG.info(record));
