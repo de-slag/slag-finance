@@ -8,30 +8,37 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>slag-finance-logic</artifactId>
-	
+
 	<properties>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
-	
-	
-		<dependencies>
-			<dependency>
-				<groupId>de.slag.common</groupId>
-				<artifactId>slag-common-base</artifactId>
-			</dependency>
 
-			<dependency>
-				<groupId>de.slag.common</groupId>
-				<artifactId>slag-common-utils</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>de.slag.common</groupId>
-				<artifactId>slag-common-context</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>javax.annotation</groupId>
-				<artifactId>javax.annotation-api</artifactId>
-			</dependency>
-		</dependencies>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-base</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-context</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-logging</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+	</dependencies>
 </project>
