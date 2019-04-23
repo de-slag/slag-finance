@@ -53,16 +53,13 @@ public class RawDataSource implements FinRawDataSource<RawDataPoint> {
 	};
 
 	public RawDataSource() {
-		final Properties configProperties = SlagConfigSupportUtils.getConfigProperties();
-		final FinProperties finProperties = new FinProperties(configProperties);
-
-		final String financeWorkdir = finProperties.getFinanceWorkdir();
+		final String financeWorkdir = FinProperties.financeWorkdir();
 		final File dir = new File(financeWorkdir);
 		if (!dir.exists()) {
 			throw new BaseException("dir not exists: " + financeWorkdir);
 		}
 
-		final String property = finProperties.getProperty(Constants.RAW_DATA_POSTFIX);
+		final String property = FinProperties.property(Constants.RAW_DATA_POSTFIX);
 
 		final File[] listFiles = dir.listFiles((currentdir, filename) -> {
 			return filename.endsWith(property);
