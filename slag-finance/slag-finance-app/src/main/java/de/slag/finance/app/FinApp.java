@@ -1,19 +1,15 @@
 package de.slag.finance.app;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.Level;
 
+import de.slag.common.base.SlagConfig;
 import de.slag.common.context.SlagContext;
+import de.slag.common.db.h2.InMemoryProperties;
+import de.slag.common.db.hibernate.HibernateDbUpdateUtils;
 import de.slag.common.logging.LoggingUtils;
-import de.slag.finance.data.RawDataSource;
-import de.slag.finance.data.model.RawDataPoint;
-import de.slag.finance.logic.FinCentralService;
+import de.slag.finance.imp.RawDataImportService;
 
 public class FinApp {
 
@@ -21,28 +17,31 @@ public class FinApp {
 
 	public static void main(String[] args) {
 		LoggingUtils.activateLogging(Level.DEBUG);
+		try {
+			new FinApp().run();
+		} catch (Throwable t) {
+			LOG.error("fehler",t);
+		} finally {
+			LOG.info("exit");
+			System.exit(0);
+		}
+	}
+
+	public void run() {
+
 		SlagContext.init();
-		final FinCentralService finCentralService = SlagContext.getBean(FinCentralService.class);
-		finCentralService.doNothing();
 
-		RawDataSource rds = new RawDataSource();
+		if (!HibernateDbUpdateUtils.isValid(new InMemoryProperties())) {
+			LOG.warn("db not valid");
+			HibernateDbUpdateUtils.update(new InMemoryProperties());
+		}
 
-		final Collection<RawDataPoint> findAll = rds.findAll();
+		LOG.info("db update done");
 
-		final Set<RawDataPoint> set = new TreeSet<RawDataPoint>(new Comparator<RawDataPoint>() {
 
-			public int compare(RawDataPoint o1, RawDataPoint o2) {
-				final int isin = o1.getIsin().compareTo(o2.getIsin());
-				if (isin != 0) {
-					return isin;
-				}
-				return o1.getDate().compareTo(o2.getDate());
-			}
-		});
-		
-		set.addAll(findAll);
+		final RawDataImportService rawDataImportService = SlagContext.getBean(RawDataImportService.class);
 
-		set.forEach(e -> LOG.info(e));
+		rawDataImportService.importFrom(SlagConfig.getConfigProperties().getProperty("slag.finance.importfolder"));
 	}
 
 }

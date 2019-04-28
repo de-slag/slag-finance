@@ -1,4 +1,4 @@
-package de.slag.finance.logic.data;
+package de.slag.finance;
 
 import org.springframework.stereotype.Service;
 
