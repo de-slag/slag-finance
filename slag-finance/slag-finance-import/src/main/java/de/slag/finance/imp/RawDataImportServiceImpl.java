@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
+import de.slag.common.utils.CsvTransformUtils;
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.data.model.Kpi;
@@ -41,7 +42,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			LOG.info("nothing to import");
 			return;
 		}
-
+		
 		final List<CSVRecord> csvRecords = getCsvRecords(importFiles);
 
 		final List<RawDataPoint> collect = csvRecords.stream().map(csv -> rawDataPoint(csv))

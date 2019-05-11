@@ -9,6 +9,7 @@ public interface FinDataPointDao {
 	Collection<FinDataPoint> loadBy(String isin);
 	
 	void save(FinDataPoint dataPoint);
+	
+	public Collection<Long> findAllIds();
 
 }
-;

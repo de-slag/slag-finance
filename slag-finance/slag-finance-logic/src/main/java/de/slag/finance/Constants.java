@@ -1,9 +1,14 @@
 package de.slag.finance;
 
 public class Constants {
+
+	@Deprecated
+	public static final String RAW_DATA_FILE = FinAvailableSettings.RAW_DATA_FILE;
 	
-	public static final String RAW_DATA_FILE = "de.slag.finance.raw-data-file";
-	public static final String FINANCE_WORKDIR = "de.slag.finance.workdir";
-	public static final String RAW_DATA_POSTFIX="de.slag.finance.raw-data-postfix";
+	@Deprecated
+	public static final String FINANCE_WORKDIR = FinAvailableSettings.FINANCE_WORKDIR;
+	
+	@Deprecated
+	public static final String RAW_DATA_POSTFIX = FinAvailableSettings.RAW_DATA_POSTFIX;
 
 }
