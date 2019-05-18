@@ -1,6 +1,6 @@
 package de.slag.finance.data.model;
 
-public enum KPI {
+public enum Kpi {
 	
 	PRICE,
 	

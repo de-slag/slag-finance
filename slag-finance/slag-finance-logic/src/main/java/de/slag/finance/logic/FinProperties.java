@@ -14,29 +14,28 @@ public class FinProperties extends Properties {
 
 	private static final long serialVersionUID = 1L;
 
-	public FinProperties(Properties p) {
+	private FinProperties(Properties p) {
 		super(p);
 		LOG.debug(p);
-	}
-
-	public String getFinanceWorkdir() {
-		return getProperty(Constants.FINANCE_WORKDIR);
-	}
-
-	public String getRawDataFile() {
-		return getProperty(Constants.RAW_DATA_FILE);
 	}
 
 	private static FinProperties instance() {
 		return new FinProperties(SlagConfigSupportUtils.getConfigProperties());
 	}
-
+	
 	public static String financeWorkdir() {
-		return instance().getFinanceWorkdir();
+		return FinProperties.property(Constants.FINANCE_WORKDIR);
 	}
 
 	public static String rawDataFile() {
-		return instance().getRawDataFile();
+		return FinProperties.property(Constants.RAW_DATA_FILE);
 	}
-
+	
+	public static String rawDataPostfix() {
+		return property(Constants.RAW_DATA_POSTFIX);
+	}
+	
+	public static String property(String key) {
+		return instance().getProperty(key);
+	}
 }

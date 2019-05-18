@@ -1,15 +1,13 @@
 package de.slag.finance.logic;
 
 import de.slag.common.base.BaseException;
-import de.slag.finance.data.model.KPI;
+import de.slag.finance.data.model.Kpi;
 
 public class FinCalcServiceImpl implements FinCalcService {
 	
-	private FinDataProvider finDataProvider;
-
 	@Override
 	public FinCalcOutput calc(final FinCalcInput input) {
-		final KPI kpi = input.getKpi();
+		final Kpi kpi = input.getKpi();
 		switch (kpi) {
 		case SMA:
 			return calcSma(input);
