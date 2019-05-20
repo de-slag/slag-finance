@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -29,18 +31,26 @@ public class FinRawDataDownloader {
 	private static final Log LOG = LogFactory.getLog(FinRawDataDownloader.class);
 
 	private static final String CLI_OPTION_OUTPUT_DIR = "o";
+	private static final String CLI_OPTION_INTERVAL = "i";
+
+	private static final Map<String, Integer> intervalMap = new HashMap<>();
 
 	public static void main(String[] args) throws IOException, ParseException {
-		LoggingUtils.activateLogging(Level.INFO);
+		setup();
 		final CommandLine parse = precheckAndParseCliOptions(args);
 
 		final String format = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		String filenname = parse.getOptionValue(CLI_OPTION_OUTPUT_DIR) + "/download-" + format + ".csv";
+		String filenname = parse.getOptionValue(CLI_OPTION_OUTPUT_DIR) + "/846900_" + format + ".csv";
 
 		final Properties configProperties = SlagConfigSupportUtils.getConfigProperties();
 		final String baseUrl = configProperties.getProperty(Constants.DOWNLOAD_BASEURL);
 		if (baseUrl == null) {
 			throw new RuntimeException("base url ist empty");
+		}
+
+		String interval = "m";
+		if ("y".equals(parse.getOptionValue(CLI_OPTION_INTERVAL))) {
+			interval = "y";
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -49,8 +59,8 @@ public class FinRawDataDownloader {
 		sb.append(baseUrl + "?notationId=");
 		sb.append("20735");
 		sb.append("&dateStart=");
-		sb.append(new SimpleDateFormat("dd.MM.yyyy").format(DateUtils.toDate(LocalDate.now().minusDays(25))));
-		sb.append("&interval=M1");
+		sb.append(startDate(interval));
+		sb.append("&interval=" + ("y".equals(interval) ? "Y":"M") +"1");
 
 		LOG.info("download...");
 		final String command = sb.toString();
@@ -63,10 +73,22 @@ public class FinRawDataDownloader {
 		}
 	}
 
+	private static String startDate(String interval) {
+		return new SimpleDateFormat("dd.MM.yyyy")
+				.format(DateUtils.toDate(LocalDate.now().minusDays(intervalMap.get(interval))));
+	}
+
+	private static void setup() {
+		LoggingUtils.activateLogging(Level.INFO);
+		intervalMap.put("m", 25);
+		intervalMap.put("y", 360);
+	}
+
 	private static CommandLine precheckAndParseCliOptions(String[] args) throws ParseException {
 
 		final Options options = CliOptionsUtils.createOptions();
 		options.addOption(CLI_OPTION_OUTPUT_DIR, true, "output directory");
+		options.addOption(CLI_OPTION_INTERVAL, true, "interval, [m]onth or [y]ear");
 
 		final CommandLine parse = CliOptionsUtils.parse(options, args);
 		final String outputPath = parse.getOptionValue(CLI_OPTION_OUTPUT_DIR);
