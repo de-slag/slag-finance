@@ -14,4 +14,6 @@ public interface FinDataPointService {
 
 	int count();
 
+	Collection<Long> findAllIds();
+
 }

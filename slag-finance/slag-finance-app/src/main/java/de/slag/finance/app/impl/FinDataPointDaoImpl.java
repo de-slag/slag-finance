@@ -33,5 +33,11 @@ public class FinDataPointDaoImpl extends AbstractDao<FinPersistDataPoint> implem
 	protected Class<FinPersistDataPoint> getPersistentType() {
 		return FinPersistDataPoint.class;
 	}
+	
+	@Override
+	public Collection<Long> findAllIds() {
+		// TODO Auto-generated method stub
+		return super.findAllIds();
+	}
 
 }
