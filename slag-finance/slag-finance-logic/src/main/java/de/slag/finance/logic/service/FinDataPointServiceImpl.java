@@ -33,5 +33,10 @@ public class FinDataPointServiceImpl implements FinDataPointService {
 	public void save(FinDataPoint dataPoint) {
 		finDataPointDao.save(dataPoint);
 	}
+	
+	@Override
+	public int count() {
+		return finDataPointDao.findAllIds().size();
+	}
 
 }
