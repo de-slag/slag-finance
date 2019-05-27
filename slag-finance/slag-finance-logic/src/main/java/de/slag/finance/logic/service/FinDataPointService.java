@@ -13,6 +13,8 @@ public interface FinDataPointService {
 	
 	void save(FinDataPoint dataPoint);
 
+	int count();
+
 	Collection<Long> findAllIds();
 
 }

@@ -35,6 +35,11 @@ public class FinDataPointServiceImpl implements FinDataPointService {
 	}
 	
 	@Override
+	public int count() {
+		return finDataPointDao.findAllIds().size();
+	}
+	
+	@Override
 	public Collection<Long> findAllIds() {
 		return finDataPointDao.findAllIds();
 	}

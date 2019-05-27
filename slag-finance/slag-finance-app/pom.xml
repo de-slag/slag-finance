@@ -25,10 +25,19 @@
 			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-logging</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-database</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
 </project>

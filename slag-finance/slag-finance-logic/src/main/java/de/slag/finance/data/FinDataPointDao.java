@@ -10,6 +10,6 @@ public interface FinDataPointDao {
 	
 	void save(FinDataPoint dataPoint);
 	
-	public Collection<Long> findAllIds();
+	Collection<Long> findAllIds();
 
 }
