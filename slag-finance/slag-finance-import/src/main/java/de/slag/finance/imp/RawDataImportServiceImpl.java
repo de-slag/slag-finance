@@ -43,7 +43,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			LOG.info("nothing to import");
 			return;
 		}
-		
+
 		final List<CSVRecord> csvRecords = getCsvRecords(importFiles);
 
 		final boolean emptyValues = csvRecords.stream().anyMatch(rec -> {
@@ -54,8 +54,8 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			}
 			return false;
 		});
-		
-		if(emptyValues) {
+
+		if (emptyValues) {
 			throw new BaseException("Values incomplete");
 		}
 
@@ -83,9 +83,9 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 
 	private List<CSVRecord> getCsvRecords(final List<File> importFiles) {
 		final List<CSVRecord> csvRecords = importFiles.stream().flatMap(f -> {
+
 			return CsvUtils.getRecords(f.getAbsolutePath()).stream();
-			
-			
+
 		}).collect(Collectors.toList());
 		return csvRecords;
 	}
