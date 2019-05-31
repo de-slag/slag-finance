@@ -1,6 +1,7 @@
 package de.slag.finance.logic.service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 import de.slag.finance.model.FinDataPoint;
 
