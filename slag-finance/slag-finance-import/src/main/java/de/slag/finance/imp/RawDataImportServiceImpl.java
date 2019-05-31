@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
-import de.slag.common.utils.CsvTransformUtils;
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.data.model.Kpi;
@@ -32,7 +31,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 
 	private static final Log LOG = LogFactory.getLog(RawDataImportServiceImpl.class);
 
-	private FinDataPointService finDataPointService = SlagContext.getBean(FinDataPointService.class);
+	private final FinDataPointService finDataPointService = SlagContext.getBean(FinDataPointService.class);
 
 	@Override
 	public void importFrom(String folderName) {
@@ -43,7 +42,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			LOG.info("nothing to import");
 			return;
 		}
-		
+
 		final List<CSVRecord> csvRecords = getCsvRecords(importFiles);
 
 		final boolean emptyValues = csvRecords.stream().anyMatch(rec -> {
@@ -54,20 +53,24 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			}
 			return false;
 		});
-		
-		if(emptyValues) {
+
+		if (emptyValues) {
 			throw new BaseException("Values incomplete");
 		}
 
-		final List<RawDataPoint> collect = csvRecords.stream().map(csv -> rawDataPoint(csv))
-				.collect(Collectors.toList());
+		final List<RawDataPoint> collect = csvRecords
+				.stream()
+					.map(csv -> rawDataPoint(csv))
+					.collect(Collectors.toList());
 
-		final List<RawDataPoint> toImport = collect.stream()
-				.filter(rdp -> !finDataPointService.exists(rdp.getIsin(), rdp.getDate())).collect(Collectors.toList());
+		final List<RawDataPoint> toImport = collect
+				.stream()
+					.filter(rdp -> !finDataPointService.exists(rdp.getIsin(), rdp.getDate()))
+					.collect(Collectors.toList());
 
 		toImport.forEach(imp -> LOG.info("import: " + imp));
 
-		for (RawDataPoint rdp : toImport) {
+		for (final RawDataPoint rdp : toImport) {
 			final FinDataPoint dp = finDataPointService.create();
 
 			dp.setIsin(rdp.getIsin());
@@ -85,7 +88,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 		final List<CSVRecord> csvRecords = importFiles.stream().flatMap(f -> {
 			try {
 				return CsvUtils.getRecords(f.getAbsolutePath()).stream();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw new BaseException(e);
 			}
 		}).collect(Collectors.toList());
@@ -100,8 +103,10 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 			return Collections.emptyList();
 		}
 
-		final List<File> importFiles = Arrays.stream(listFiles).filter(f -> f.getAbsolutePath().endsWith("raw.csv"))
-				.collect(Collectors.toList());
+		final List<File> importFiles = Arrays
+				.stream(listFiles)
+					.filter(f -> f.getAbsolutePath().endsWith("raw.csv"))
+					.collect(Collectors.toList());
 		return importFiles;
 	}
 
@@ -110,7 +115,7 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 		rdp.setIsin(csv.get("ISIN"));
 		try {
 			rdp.setDate(DateUtils.toLocalDate(new SimpleDateFormat("yyyy.MM.dd").parse(csv.get("DATE"))));
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			throw new BaseException(e);
 		}
 		rdp.setValue(BigDecimal.valueOf(Double.valueOf(csv.get("VALUE"))));
