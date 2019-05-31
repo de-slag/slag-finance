@@ -2,14 +2,21 @@ package de.slag.finance.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import javax.naming.OperationNotSupportedException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -24,9 +31,15 @@ import de.slag.common.context.SlagContext;
 import de.slag.common.logging.LoggingUtils;
 import de.slag.common.utils.CliOptionsUtils;
 import de.slag.common.utils.CsvUtils;
+import de.slag.common.utils.DateUtils;
 import de.slag.common.utils.FileDirectoryUtils;
+import de.slag.finance.data.model.Kpi;
+import de.slag.finance.logic.service.FinDataPointService;
+import de.slag.finance.model.FinDataPoint;
 
 public class FinDataImporter {
+
+	private static final String SDF_DATE_FORMAT = "yyyy-MM-dd";
 
 	private static final Log LOG = LogFactory.getLog(FinDataImporter.class);
 
@@ -39,6 +52,7 @@ public class FinDataImporter {
 	private static final String ISIN = "ISIN";
 
 	public void importData(String directoryOfInput, String fileOfOutput) {
+
 		final String inputDir = Objects.requireNonNull(directoryOfInput, "input dir must not be null");
 		final String outputFile = Objects.requireNonNull(fileOfOutput, "output file must not be null");
 
@@ -46,30 +60,46 @@ public class FinDataImporter {
 			createOutputFile(outputFile);
 		}
 
-		final Collection<File> allFilesOf = FileDirectoryUtils.allFilesOf(inputDir);
-		allFilesOf.forEach(f -> LOG.info(f.getName()));
+		final Collection<CSVRecord> records = CsvUtils.getRecords(outputFile);
+		final FinDataPointService finDataPointService = SlagContext.getBean(FinDataPointService.class);
+		records.stream()
+				.filter(rec -> {
+					final String isin = rec.get(ISIN);
+					final LocalDate date2 = date(rec);	
+					return !finDataPointService.exists(isin, date2);
+				})
+				.forEach(rec -> {
+					final BigDecimal valueOf = BigDecimal.valueOf(Double.valueOf(rec.get(PRICE)));
+					final String isin = rec.get(ISIN);
+					final LocalDate localDate = date(rec);
+				
+					final FinDataPoint dp = finDataPointService.create();
+					dp.setDate(localDate);
+					dp.setIsin(isin);
+					dp.setKpi(Kpi.PRICE);
+					dp.setValue(valueOf);
+					
+					finDataPointService.save(dp);
+					
+					
+					
+					
+					
+				});
 
 	}
 
-	private void addIfAny(Map<String, String> values, String filename) {
-		Collection<CSVRecord> records;
+	private LocalDate date(CSVRecord rec) {
+		final String dateString = rec.get(DATE);
+		final SimpleDateFormat sdf = new SimpleDateFormat(SDF_DATE_FORMAT);
+		Date parsedDate;
 		try {
-			records = CsvUtils.getRecords(filename);
-		} catch (IOException e) {
+			parsedDate = sdf.parse(dateString);
+		} catch (java.text.ParseException e) {
 			throw new BaseException(e);
 		}
-		final boolean isPresent = records.stream()
-				.filter(record -> record.get(DATE)
-						.equals(values.get(DATE)))
-				.filter(record -> record.get(ISIN)
-						.equals(values.get(ISIN)))
-				.findAny()
-				.isPresent();
-		if (isPresent) {
-			return;
-		}
-		
-
+		final LocalDate localDate = DateUtils.toLocalDate(parsedDate);
+		return localDate;
 	}
 
 	private void createOutputFile(String outputFile) {

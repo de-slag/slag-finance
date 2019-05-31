@@ -86,11 +86,9 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 
 	private List<CSVRecord> getCsvRecords(final List<File> importFiles) {
 		final List<CSVRecord> csvRecords = importFiles.stream().flatMap(f -> {
-			try {
-				return CsvUtils.getRecords(f.getAbsolutePath()).stream();
-			} catch (final IOException e) {
-				throw new BaseException(e);
-			}
+	
+			return CsvUtils.getRecords(f.getAbsolutePath()).stream();
+
 		}).collect(Collectors.toList());
 		return csvRecords;
 	}
