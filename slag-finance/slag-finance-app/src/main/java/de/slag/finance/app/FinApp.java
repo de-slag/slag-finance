@@ -4,24 +4,22 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.function.Function;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.Level;
 
 import de.slag.common.base.BaseException;
-import de.slag.common.base.SlagConfig;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.h2.InMemoryProperties;
 import de.slag.common.db.hibernate.HibernateDbUpdateUtils;
 import de.slag.common.logging.LoggingUtils;
 import de.slag.common.utils.CsvTransformUtils;
 import de.slag.common.utils.CsvTransformUtils.CsvTransformException;
+import de.slag.common.utils.SlagConfigSupportUtils;
 import de.slag.finance.FinAvailableSettings;
 import de.slag.finance.imp.RawDataImportService;
 import de.slag.finance.logic.service.FinDataPointService;
-import de.slag.finance.model.FinDataPoint;
 
 public class FinApp {
 
@@ -60,7 +58,7 @@ public class FinApp {
 	}
 
 	private void prepareImport() throws CsvTransformException {
-		final String workdir = SlagConfig.getConfigProperties().getProperty(FinAvailableSettings.FINANCE_IMPORTFOLDER);
+		final String workdir = SlagConfigSupportUtils.getConfigProperties().getProperty(FinAvailableSettings.FINANCE_IMPORTFOLDER);
 		String in = workdir + "/export.csv";
 		String stage1 = workdir + "/export1.csv";
 		String stage2 = workdir + "/export2.csv";
@@ -104,7 +102,7 @@ public class FinApp {
 		final RawDataImportService rawDataImportService = SlagContext.getBean(RawDataImportService.class);
 
 		rawDataImportService
-				.importFrom(SlagConfig.getConfigProperties().getProperty(FinAvailableSettings.FINANCE_IMPORTFOLDER));
+				.importFrom(SlagConfigSupportUtils.getConfigProperties().getProperty(FinAvailableSettings.FINANCE_IMPORTFOLDER));
 	}
 
 	private void setup() {
