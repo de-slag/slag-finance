@@ -16,37 +16,7 @@ public class CsvToDataPoint implements Function<CSVRecord, FinDataPoint> {
 
 		// TODO Auto-generated method stub
 		return new FinDataPoint() {
-
-			@Override
-			public void setValue(BigDecimal value) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setParameters(int[] parameters) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setKpi(Kpi kpi) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setIsin(String date) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setDate(LocalDate date) {
-				throw new UnsupportedOperationException();
-
-			}
-
+			
 			@Override
 			public BigDecimal getValue() {
 				// TODO Auto-generated method stub

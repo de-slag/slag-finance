@@ -25,6 +25,7 @@ import de.slag.finance.data.model.Kpi;
 import de.slag.finance.imp.model.RawDataPoint;
 import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.FinDataPointFactory;
 
 @Service
 public class RawDataImportServiceImpl implements RawDataImportService {
@@ -71,14 +72,14 @@ public class RawDataImportServiceImpl implements RawDataImportService {
 		toImport.forEach(imp -> LOG.info("import: " + imp));
 
 		for (final RawDataPoint rdp : toImport) {
-			final FinDataPoint dp = finDataPointService.create();
+			final FinDataPointFactory dpFactory = finDataPointService.getFactory();
 
-			dp.setIsin(rdp.getIsin());
-			dp.setKpi(Kpi.PRICE);
-			dp.setDate(rdp.getDate());
-			dp.setValue(rdp.getValue());
-			LOG.info("SAVE: " + dp);
-			finDataPointService.save(dp);
+			dpFactory.setIsin(rdp.getIsin());
+			dpFactory.setKpi(Kpi.PRICE);
+			dpFactory.setDate(rdp.getDate());
+			dpFactory.setValue(rdp.getValue());
+			LOG.info("SAVE: " + dpFactory);
+			finDataPointService.save(dpFactory.create());
 
 		}
 

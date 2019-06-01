@@ -83,7 +83,6 @@ public class FinPersistDataPoint extends EntityBean implements FinDataPoint {
 		return a;
 	}
 
-	@Override
 	public void setParameters(int[] parameters) {
 		final List<String> collect = Arrays.asList(parameters).stream().map(i -> String.valueOf(i))
 				.collect(Collectors.toList());

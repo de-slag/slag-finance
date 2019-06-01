@@ -36,6 +36,7 @@ import de.slag.common.utils.FileDirectoryUtils;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.FinDataPointFactory;
 
 public class FinDataImporter {
 
@@ -62,30 +63,24 @@ public class FinDataImporter {
 
 		final Collection<CSVRecord> records = CsvUtils.getRecords(outputFile);
 		final FinDataPointService finDataPointService = SlagContext.getBean(FinDataPointService.class);
-		records.stream()
-				.filter(rec -> {
-					final String isin = rec.get(ISIN);
-					final LocalDate date2 = date(rec);	
-					return !finDataPointService.exists(isin, date2);
-				})
-				.forEach(rec -> {
-					final BigDecimal valueOf = BigDecimal.valueOf(Double.valueOf(rec.get(PRICE)));
-					final String isin = rec.get(ISIN);
-					final LocalDate localDate = date(rec);
-				
-					final FinDataPoint dp = finDataPointService.create();
-					dp.setDate(localDate);
-					dp.setIsin(isin);
-					dp.setKpi(Kpi.PRICE);
-					dp.setValue(valueOf);
-					
-					finDataPointService.save(dp);
-					
-					
-					
-					
-					
-				});
+		records.stream().filter(rec -> {
+			final String isin = rec.get(ISIN);
+			final LocalDate date2 = date(rec);
+			return !finDataPointService.exists(isin, date2);
+		}).forEach(rec -> {
+			final BigDecimal valueOf = BigDecimal.valueOf(Double.valueOf(rec.get(PRICE)));
+			final String isin = rec.get(ISIN);
+			final LocalDate localDate = date(rec);
+
+			final FinDataPointFactory dpFactory = finDataPointService.getFactory();
+			dpFactory.setDate(localDate);
+			dpFactory.setIsin(isin);
+			dpFactory.setKpi(Kpi.PRICE);
+			dpFactory.setValue(valueOf);
+
+			finDataPointService.save(dpFactory.create());
+
+		});
 
 	}
 

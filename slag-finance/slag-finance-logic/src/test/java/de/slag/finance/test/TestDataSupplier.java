@@ -29,36 +29,6 @@ public class TestDataSupplier implements Supplier<Collection<FinDataPoint>> {
 			private final BigDecimal value = BigDecimal.valueOf(Double.valueOf(rec.get("VALUE")));
 
 			@Override
-			public void setValue(BigDecimal value) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setParameters(int[] parameters) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setKpi(Kpi kpi) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setIsin(String date) {
-				throw new UnsupportedOperationException();
-
-			}
-
-			@Override
-			public void setDate(LocalDate date) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
 			public BigDecimal getValue() {
 
 				return value;
