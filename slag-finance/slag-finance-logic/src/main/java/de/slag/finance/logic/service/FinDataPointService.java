@@ -16,7 +16,7 @@ public interface FinDataPointService {
 	FinDataPointFactory getFactory();
 	
 	default boolean exists(String isin, LocalDate date) {
-		final Collection<FinDataPoint> loadBy = getDao().loadBy(isin);
+		final Collection<FinDataPoint> loadBy = getDao().findBy(isin);
 		return loadBy.stream()
 				.filter(dataPoint -> dataPoint.getDate() != null)
 				.anyMatch(dataPoint -> dataPoint.getDate().equals(date));

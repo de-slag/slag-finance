@@ -13,7 +13,7 @@ import de.slag.finance.model.FinDataPoint;
 public class FinDataPointDaoImpl extends AbstractDao<FinPersistDataPoint> implements FinDataPointDao {
 
 	@Override
-	public Collection<FinDataPoint> loadBy(String isin) {
+	public Collection<FinDataPoint> findBy(String isin) {
 		final Collection<Long> findAllIds = findAllIds();
 		return findAllIds.stream()
 				.map(id -> loadById(id))
@@ -33,11 +33,4 @@ public class FinDataPointDaoImpl extends AbstractDao<FinPersistDataPoint> implem
 	protected Class<FinPersistDataPoint> getPersistentType() {
 		return FinPersistDataPoint.class;
 	}
-	
-	@Override
-	public Collection<Long> findAllIds() {
-		// TODO Auto-generated method stub
-		return super.findAllIds();
-	}
-
 }

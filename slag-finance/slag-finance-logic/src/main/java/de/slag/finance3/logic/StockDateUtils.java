@@ -1,4 +1,4 @@
-package de.slag.finance.logic;
+package de.slag.finance3.logic;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -8,9 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.slag.common.utils.DateUtils;
-
-public class FinStockDateUtils {
+public class StockDateUtils {
 
 	private static final Collection<DayOfWeek> WEEKEND = Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 
@@ -45,20 +43,9 @@ public class FinStockDateUtils {
 		}
 		if (month == Month.DECEMBER) {
 			if (CHRISTMAS_AND_YEARSEND.contains(dayOfMonth)) {
-				return false;
+				return false;				
 			}
 		}
-		final LocalDate easterSunday = DateUtils.getEasterSunday(date.getYear());
-		final LocalDate goodFriday = easterSunday.minusDays(2);
-		if (goodFriday.equals(date)) {
-			return false;
-		}
-		final LocalDate easterMonday = easterSunday.plusDays(1);
-		if (easterMonday.equals(date)) {
-			return false;
-		}
-		
-		final LocalDate pfingsten = easterSunday.plusDays(50);
 
 		return true;
 	}

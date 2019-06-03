@@ -6,7 +6,7 @@ import de.slag.finance.model.FinDataPoint;
 
 public interface FinDataPointDao {
 	
-	Collection<FinDataPoint> loadBy(String isin);
+	Collection<FinDataPoint> findBy(String isin);
 	
 	void save(FinDataPoint dataPoint);
 	
