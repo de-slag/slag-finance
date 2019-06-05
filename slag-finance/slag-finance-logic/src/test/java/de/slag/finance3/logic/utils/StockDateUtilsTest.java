@@ -1,4 +1,4 @@
-package de.slag.finance3.logic;
+package de.slag.finance3.logic.utils;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package de.slag.finance3.logic;
+package de.slag.finance3.logic.utils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

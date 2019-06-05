@@ -10,7 +10,7 @@ import de.slag.common.base.BaseException;
 import de.slag.common.utils.MathUtils;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance3.logic.FinDataProvider;
-import de.slag.finance3.logic.StockDateUtils;
+import de.slag.finance3.logic.utils.StockDateUtils;
 
 public class SmaCalcUtils {
 
