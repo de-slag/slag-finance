@@ -11,7 +11,7 @@ import de.slag.finance2.calc.sma.SmaCalcUtils;
 
 public class FinCalcServiceImpl implements FinCalcService {
 
-	private FinAppContext finAppContext = SlagContext.getBean(FinAppContext.class);
+	private FinAppContext finAppContext;// = SlagContext.getBean(FinAppContext.class);
 
 	private Collection<FinDataPoint> findBy(String isin) {
 		return finAppContext.getDataPointManager()

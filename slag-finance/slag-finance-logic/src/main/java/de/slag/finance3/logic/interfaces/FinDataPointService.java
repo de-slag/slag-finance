@@ -15,8 +15,7 @@ public interface FinDataPointService {
 
 	Collection<FinDataPoint> getAll(String isin);
 	
-	FinDataPoint store(String isin, LocalDate date, Kpi kpi, int[] parameters, BigDecimal value);
-	
+	FinDataPoint store(String isin, LocalDate date, Kpi kpi, int[] parameters, BigDecimal value);	
 
 	default Optional<FinDataPoint> get(String isin, LocalDate date, Kpi kpi, int[] parameters) {
 		return getAll(isin).stream().filter(dp -> dp.getDate().equals(date)).filter(dp -> dp.getKpi() == kpi)

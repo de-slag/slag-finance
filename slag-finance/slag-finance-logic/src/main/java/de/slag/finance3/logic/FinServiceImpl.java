@@ -3,10 +3,11 @@ package de.slag.finance3.logic;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
-import de.slag.common.context.SlagContext;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance3.logic.interfaces.FinDataPointService;
@@ -14,7 +15,8 @@ import de.slag.finance3.logic.interfaces.FinDataPointService;
 @Service
 public class FinServiceImpl implements FinService {
 
-	private FinDataPointService finDataPointService = SlagContext.getBean(FinDataPointService.class);
+	@Resource
+	private FinDataPointService finDataPointService;
 
 	@Override
 	public FinDataPoint calc(String isin, LocalDate date, Kpi kpi, int[] parameters) {
