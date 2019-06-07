@@ -58,7 +58,6 @@ public class FinDataPointFactoryImpl implements FinDataPointFactory {
 	@Override
 	public void setKpi(Kpi kpi) {
 		this.kpi = kpi;
-		;
 
 	}
 
