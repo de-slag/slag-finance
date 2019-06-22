@@ -1,7 +1,7 @@
 package de.slag.finance.app.impl;
 
 import de.slag.common.context.SlagContext;
-import de.slag.common.db.EntityBean;
+import de.slag.common.model.EntityBean;
 import de.slag.finance.data.FinDataPointDao;
 import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;

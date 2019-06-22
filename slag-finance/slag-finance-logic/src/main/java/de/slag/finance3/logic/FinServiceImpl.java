@@ -3,26 +3,26 @@ package de.slag.finance3.logic;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import javax.annotation.PostConstruct;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
-import de.slag.finance3.logic.interfaces.FinDataPointService;
 
 @Service
 public class FinServiceImpl implements FinService {
-
-	@Resource
-	private FinDataPointService finDataPointService;
+	
+	private static final Log LOG = LogFactory.getLog(FinServiceImpl.class);
 
 	@Override
 	public FinDataPoint calc(String isin, LocalDate date, Kpi kpi, int[] parameters) {
 		switch (kpi) {
 		case PRICE:
-			final Optional<FinDataPoint> optional = finDataPointService.get(isin, date, kpi, parameters);
+			final Optional<FinDataPoint> optional = Optional.empty();// = finDataPointService.get(isin, date, kpi, parameters);
 			if (!optional.isPresent()) {
 				throw new BaseException(String.format("Price is not available for: %s %s", isin, date));
 			}

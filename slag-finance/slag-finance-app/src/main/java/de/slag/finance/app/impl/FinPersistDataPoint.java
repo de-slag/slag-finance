@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 import org.apache.logging.log4j.util.Strings;
 
-import de.slag.common.db.EntityBean;
+import de.slag.common.model.EntityBean;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;

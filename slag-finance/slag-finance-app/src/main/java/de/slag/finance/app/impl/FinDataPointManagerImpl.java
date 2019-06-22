@@ -14,7 +14,7 @@ import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointDefaultComparator;
 import de.slag.finance2.FinDataPointManager;
 
-@Service
+//@Service
 public class FinDataPointManagerImpl implements FinDataPointManager {
 	
 	private FinDataPointDao finDataPointDao = SlagContext.getBean(FinDataPointDao.class); 

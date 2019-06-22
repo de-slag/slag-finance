@@ -27,7 +27,7 @@ import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointFactory;
 
-@Service
+//@Service
 public class RawDataImportServiceImpl implements RawDataImportService {
 
 	private static final Log LOG = LogFactory.getLog(RawDataImportServiceImpl.class);

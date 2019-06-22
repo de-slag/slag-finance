@@ -18,6 +18,7 @@
 		<module>slag-finance-logic</module>
 		<module>slag-finance-app</module>
 		<module>slag-finance-import</module>
+		<module>slag-finance-model</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

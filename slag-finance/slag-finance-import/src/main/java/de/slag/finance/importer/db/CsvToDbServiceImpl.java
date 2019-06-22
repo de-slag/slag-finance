@@ -14,7 +14,7 @@ import de.slag.common.utils.CsvUtils;
 import de.slag.finance.data.FinDataPointDao;
 import de.slag.finance.model.FinDataPoint;
 
-@Service
+//@Service
 public class CsvToDbServiceImpl {
 
 	private FinDataPointDao finDataPointDao = SlagContext.getBean(FinDataPointDao.class);

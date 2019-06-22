@@ -9,7 +9,7 @@ import de.slag.common.db.AbstractDao;
 import de.slag.finance.data.FinDataPointDao;
 import de.slag.finance.model.FinDataPoint;
 
-@Repository
+//@Repository
 public class FinDataPointDaoImpl extends AbstractDao<FinPersistDataPoint> implements FinDataPointDao {
 
 	@Override
