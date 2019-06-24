@@ -20,7 +20,7 @@ import de.slag.common.utils.DateUtils;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 
-@Entity
+//@Entity
 @Table(name = "FIN_DATA_POINT")
 public class FinPersistDataPoint extends EntityBean implements FinDataPoint {
 

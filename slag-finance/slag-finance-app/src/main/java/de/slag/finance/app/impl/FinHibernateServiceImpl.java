@@ -8,7 +8,7 @@ import de.slag.common.db.h2.InMemoryProperties;
 import de.slag.common.db.hibernate.AbstractHibernateServiceImpl;
 import de.slag.common.db.hibernate.HibernateService;
 
-@Service
+//@Service
 public class FinHibernateServiceImpl extends AbstractHibernateServiceImpl implements HibernateService {
 
 	@Override
