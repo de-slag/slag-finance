@@ -1,12 +1,14 @@
 package de.slag.finance3.logic.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.slag.common.base.SlagProperties;
 
@@ -28,6 +30,13 @@ public final class FinAdminSupport {
 		final HashMap<String, String> hashMap = new HashMap<>();
 		hashMap.putAll(MAP);
 		return hashMap;
+	}
+
+	public static Map<String, String> getAll(String startWith) {
+		final List<String> keys = MAP.keySet().stream().filter(key -> key.startsWith(startWith)).collect(Collectors.toList());
+		final HashMap<String, String> subMap = new HashMap<>();
+		keys.forEach(key-> subMap.put(key, MAP.get(key)));
+		return subMap;
 	}
 
 	public static String getSafe(String key) {

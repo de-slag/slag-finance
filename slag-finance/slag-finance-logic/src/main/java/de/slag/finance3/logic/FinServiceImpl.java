@@ -2,8 +2,10 @@ package de.slag.finance3.logic;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,8 @@ import de.slag.finance.IsinWknDao;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.IsinWkn;
+import de.slag.finance3.AvailableProperties;
+import de.slag.finance3.logic.config.FinAdminSupport;
 import de.slag.finance3.logic.importer.FinImportService;
 
 @Service
@@ -27,9 +31,6 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private FinImportService finImportService;
-
-	@Resource
-	private FinIsinWknGeneratorService finIsinWknGeneratorService;
 
 	@Resource
 	private IsinWknDao isinWknDao;
@@ -56,24 +57,30 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void assertIsinWkn() {
-		
+
 		LOG.info("assert isin-wkn...");
-		final Collection<IsinWkn> generate = finIsinWknGeneratorService.generate();
+		final Map<String, String> configuredWkns = FinAdminSupport.getAll(AvailableProperties.DATA_WKN);
 
-		final List<String> existingIsins = isinWknDao.findAllIds()
-				.stream()
-				.map(id -> isinWknDao.loadById(id))
-				.filter(isinWkn -> isinWkn.isPresent())
-				.map(isinWkn -> isinWkn.get())
-				.map(isinWkn -> isinWkn.getIsin())
+
+		final Collection<IsinWkn> isinWkns = new ArrayList<IsinWkn>();
+		LOG.info(String.format("generate '%s'...", configuredWkns.keySet()));
+		isinWkns.addAll(configuredWkns.keySet().stream().map(wknProperty -> {
+			String[] split = wknProperty.split("\\.");
+			String wkn = split[split.length - 1];
+			String isin = configuredWkns.get(wknProperty);
+			return new IsinWkn.Builder().wkn(wkn).isin(isin).build();
+		}).collect(Collectors.toList()));
+
+		final List<String> existingIsins = isinWknDao.findAllIds().stream().map(id -> isinWknDao.loadById(id))
+				.filter(isinWkn -> isinWkn.isPresent()).map(isinWkn -> isinWkn.get()).map(isinWkn -> isinWkn.getIsin())
 				.collect(Collectors.toList());
 
-		final List<IsinWkn> isinWknToSave = generate.stream()
-				.filter(g -> !existingIsins.contains(g.getIsin()))
+		final List<IsinWkn> isinWknToSave = isinWkns.stream().filter(g -> !existingIsins.contains(g.getIsin()))
 				.collect(Collectors.toList());
+
 		LOG.info(String.format("isin-wkns to save: '%s'", isinWknToSave));
 		isinWknToSave.forEach(isinWkn -> isinWknDao.save(isinWkn));
-		
+
 		LOG.info(isinWknDao.findAllIds());
 	}
 }
