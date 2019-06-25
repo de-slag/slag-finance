@@ -56,6 +56,7 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void assertIsinWkn() {
+		
 		LOG.info("assert isin-wkn...");
 		final Collection<IsinWkn> generate = finIsinWknGeneratorService.generate();
 
