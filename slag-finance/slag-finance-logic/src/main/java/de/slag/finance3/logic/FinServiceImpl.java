@@ -3,6 +3,7 @@ package de.slag.finance3.logic;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,15 +62,23 @@ public class FinServiceImpl implements FinService {
 		LOG.info("assert isin-wkn...");
 		final Map<String, String> configuredWkns = FinAdminSupport.getAll(AvailableProperties.DATA_WKN);
 
+		final String wknIsinsProperty = FinAdminSupport.get(AvailableProperties.DATA_WKN_ISINS).orElseThrow();
+
+		final List<String> wknIsins = Arrays.asList(wknIsinsProperty.split(";"));
 
 		final Collection<IsinWkn> isinWkns = new ArrayList<IsinWkn>();
-		LOG.info(String.format("generate '%s'...", configuredWkns.keySet()));
-		isinWkns.addAll(configuredWkns.keySet().stream().map(wknProperty -> {
-			String[] split = wknProperty.split("\\.");
-			String wkn = split[split.length - 1];
-			String isin = configuredWkns.get(wknProperty);
-			return new IsinWkn.Builder().wkn(wkn).isin(isin).build();
-		}).collect(Collectors.toList()));
+		wknIsins.forEach(wknIsin -> {
+			final String[] split = wknIsin.split(":");
+			if (split.length != 2) {
+				throw new BaseException("not valid: " + wknIsin);
+			}
+			final String wkn = split[0];
+			final String isin = split[1];
+			
+			IsinWkn isinWkn = new IsinWkn.Builder().wkn(wkn).isin(isin).build();
+			LOG.info(String.format("add '%s'", isinWkn));
+			isinWkns.add(isinWkn);
+		});
 
 		final List<String> existingIsins = isinWknDao.findAllIds().stream().map(id -> isinWknDao.loadById(id))
 				.filter(isinWkn -> isinWkn.isPresent()).map(isinWkn -> isinWkn.get()).map(isinWkn -> isinWkn.getIsin())
