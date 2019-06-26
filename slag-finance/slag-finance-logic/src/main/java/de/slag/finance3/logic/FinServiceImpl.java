@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,11 +36,10 @@ public class FinServiceImpl implements FinService {
 	private IsinWknDao isinWknDao;
 
 	@Override
-	public FinDataPoint calc(String isin, LocalDate date, Kpi kpi, int[] parameters) {
+	public FinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters) {
 		switch (kpi) {
 		case PRICE:
-			final Optional<FinDataPoint> optional = Optional.empty();// = finDataPointService.get(isin, date, kpi,
-																		// parameters);
+			final Optional<FinDataPoint> optional = Optional.empty();
 			if (!optional.isPresent()) {
 				throw new BaseException(String.format("Price is not available for: %s %s", isin, date));
 			}
@@ -93,11 +91,24 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void calcAllAdministered() {
-		final List<String> calcKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS).split(";"));
-		calcKpis.forEach(kpi -> {
-			LOG.info(kpi);
-			
-			// TODO: continue
+		final List<String> admKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS).split(";"));
+		admKpis.forEach(admKpi -> {
+			LOG.info(admKpi);
+			String[] split = admKpi.split("_");
+			final Kpi kpi = Kpi.valueOf(split[0]);
+			ArrayList<Integer> parameters = new ArrayList<>();
+			for (int i = 1; i < split.length; i++) { // sic! ignore first
+				parameters.add(Integer.valueOf(split[i]));
+			}
+			LOG.info(String.format("kpi: '%s' %s", kpi, parameters));
+
+			final Collection<Long> allIds = isinWknDao.findAllIds();
+
+			allIds.forEach(id -> {
+				final IsinWkn isinWkn = isinWknDao.loadById(id).orElseThrow();
+				calc(isinWkn.getIsin(), LocalDate.now(), kpi, parameters.toArray(new Integer[0]));
+
+			});
 		});
 
 	}

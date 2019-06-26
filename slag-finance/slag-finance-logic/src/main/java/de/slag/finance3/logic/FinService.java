@@ -8,7 +8,7 @@ import de.slag.finance.model.FinDataPoint;
 
 public interface FinService {
 	
-	FinDataPoint calc(String isin, LocalDate date, Kpi kpi, int[] parameters);
+	FinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters);
 	
 	void importData(Path fromPath);
 
