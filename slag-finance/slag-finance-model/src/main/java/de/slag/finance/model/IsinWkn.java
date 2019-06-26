@@ -29,6 +29,11 @@ public class IsinWkn extends EntityBean {
 		this.wkn = wkn;
 	}
 	
+	@Override
+	public String toString() {
+		return "IsinWkn [isin=" + isin + ", wkn=" + wkn + "]";
+	}
+	
 	public static class Builder {
 		String isin;
 		String wkn;
@@ -51,5 +56,6 @@ public class IsinWkn extends EntityBean {
 		}
 		
 	}
+
 	
 }
