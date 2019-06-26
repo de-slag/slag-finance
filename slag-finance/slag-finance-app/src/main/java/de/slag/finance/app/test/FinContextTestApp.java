@@ -49,8 +49,12 @@ public class FinContextTestApp {
 
 	public void run() {
 		finService.assertIsinWkn();
-
 		finService.importData(Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR)));
+		finService.calcAllAdministered();
+		
+		
+		
+		
 	}
 
 }

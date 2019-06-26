@@ -60,9 +60,7 @@ public class FinServiceImpl implements FinService {
 	public void assertIsinWkn() {
 
 		LOG.info("assert isin-wkn...");
-		final Map<String, String> configuredWkns = FinAdminSupport.getAll(AvailableProperties.DATA_WKN);
-
-		final String wknIsinsProperty = FinAdminSupport.get(AvailableProperties.DATA_WKN_ISINS).orElseThrow();
+		final String wknIsinsProperty = FinAdminSupport.getSafe(AvailableProperties.DATA_WKN_ISINS);
 
 		final List<String> wknIsins = Arrays.asList(wknIsinsProperty.split(";"));
 
@@ -74,7 +72,7 @@ public class FinServiceImpl implements FinService {
 			}
 			final String wkn = split[0];
 			final String isin = split[1];
-			
+
 			IsinWkn isinWkn = new IsinWkn.Builder().wkn(wkn).isin(isin).build();
 			LOG.info(String.format("add '%s'", isinWkn));
 			isinWkns.add(isinWkn);
@@ -91,5 +89,16 @@ public class FinServiceImpl implements FinService {
 		isinWknToSave.forEach(isinWkn -> isinWknDao.save(isinWkn));
 
 		LOG.info(isinWknDao.findAllIds());
+	}
+
+	@Override
+	public void calcAllAdministered() {
+		final List<String> calcKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS).split(";"));
+		calcKpis.forEach(kpi -> {
+			LOG.info(kpi);
+			
+			// TODO: continue
+		});
+
 	}
 }

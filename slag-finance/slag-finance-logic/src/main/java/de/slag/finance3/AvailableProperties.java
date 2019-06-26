@@ -8,5 +8,7 @@ public interface AvailableProperties {
 	String DATA_WKN = "finance.data.wkn";
 	
 	String DATA_WKN_ISINS = "finance.data.wknisins";
+	
+	String CALC_KPIS = "finance.calc.kpis";
 
 }

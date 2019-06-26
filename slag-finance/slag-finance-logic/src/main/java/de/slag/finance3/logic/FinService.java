@@ -13,5 +13,7 @@ public interface FinService {
 	void importData(Path fromPath);
 
 	void assertIsinWkn();
+	
+	void calcAllAdministered();
 
 }
