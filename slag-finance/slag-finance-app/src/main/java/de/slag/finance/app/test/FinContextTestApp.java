@@ -10,7 +10,6 @@ import de.slag.common.XiDataDao;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
-import de.slag.finance.FinPriceDao;
 import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.logic.FinService;
 import de.slag.finance3.logic.config.FinAdminSupport;
