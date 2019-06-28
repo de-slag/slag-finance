@@ -7,11 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.slag.common.XiDataDao;
-import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
-import de.slag.common.model.XiData;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.logic.FinService;
@@ -26,8 +24,6 @@ public class FinContextTestApp {
 	private HibernateResource hibernateResource;
 
 	private XiDataDao xiDataDao;
-	
-	private FinPriceDao finPriceDao;
 
 	public static void main(String[] args) {
 		LoggingUtils.activateLogging();
@@ -62,7 +58,6 @@ public class FinContextTestApp {
 
 		finService = SlagContext.getBean(FinService.class);
 		xiDataDao = SlagContext.getBean(XiDataDao.class);
-		finPriceDao = SlagContext.getBean(FinPriceDao.class);
 
 		LOG.info("set up...done.");
 	}
