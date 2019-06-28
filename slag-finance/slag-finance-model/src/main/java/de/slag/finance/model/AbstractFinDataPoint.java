@@ -8,11 +8,13 @@ import javax.persistence.MappedSuperclass;
 import de.slag.common.model.EntityBean;
 
 @MappedSuperclass
-public class AbstractFinDataPoint extends EntityBean {
+public abstract class AbstractFinDataPoint extends EntityBean {
 
 	private String isin;
 	private Date date;
 	private BigDecimal value;
+	
+	public abstract Integer[] getParameter();
 
 	public String getIsin() {
 		return isin;
