@@ -2,15 +2,26 @@ package de.slag.finance.app.test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.slag.common.XiDataDao;
+import de.slag.common.base.event.Event;
+import de.slag.common.base.event.EventAction;
+import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
+import de.slag.common.utils.DateUtils;
+import de.slag.finance.FinPriceDao;
+import de.slag.finance.FinSmaDao;
+import de.slag.finance.model.FinPrice;
 import de.slag.finance3.AvailableProperties;
+import de.slag.finance3.events.DataImportedEvent;
 import de.slag.finance3.logic.FinService;
 import de.slag.finance3.logic.config.FinAdminSupport;
 
@@ -22,7 +33,7 @@ public class FinContextTestApp {
 
 	private HibernateResource hibernateResource;
 
-	private XiDataDao xiDataDao;
+	private FinSmaDao finSmaDao;
 
 	public static void main(String[] args) {
 		LoggingUtils.activateLogging();
@@ -30,8 +41,8 @@ public class FinContextTestApp {
 
 		try {
 			app.setUp();
-			app.test();
 			app.run();
+			app.test();
 		} catch (Throwable t) {
 			LOG.error("error execution", t);
 			System.exit(1);
@@ -55,31 +66,41 @@ public class FinContextTestApp {
 		LOG.info(sb);
 
 		finService = SlagContext.getBean(FinService.class);
-		xiDataDao = SlagContext.getBean(XiDataDao.class);
+		finSmaDao = SlagContext.getBean(FinSmaDao.class);
 
 		LOG.info("set up...done.");
+		EventBus.addAction(new EventAction() {
+
+			@Override
+			public void run(Event event) {
+				if (!(event instanceof DataImportedEvent)) {
+					return;
+				}
+				final FinPriceDao finPriceDao = SlagContext.getBean(FinPriceDao.class);
+				final Collection<FinPrice> all = finPriceDao.findAll();
+
+				final Date date = DateUtils.toDate(LocalDate.of(2019, 6, 10));
+
+				Collection<FinPrice> c = all.stream().filter(p -> p.getDate().after(date)).collect(Collectors.toList());
+
+				c.forEach(e -> LOG.info(e));
+
+			}
+		});
 	}
 
 	public void test() {
-
+		final Collection<Long> findAllIds = finSmaDao.findAllIds();
+		LOG.info("SMAs found: " + findAllIds.size());
 	}
 
 	public void run() {
 		finService.assertIsinWkn();
 		final Path path = Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
 		finService.stageData(path);
-
-		xiDataDao.findAllIds().stream().map(id -> xiDataDao.loadById(id)).filter(xi -> xi.isPresent())
-				.map(xi -> xi.get()).forEach(xi -> LOG.info("import: " + xi));
-
 		finService.importData();
-		
-		finService.stageData(path);
-		finService.importData();
-		
-		
-		
-		
+		finService.calcAllAdministered();
+
 	}
 
 }

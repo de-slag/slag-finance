@@ -43,4 +43,12 @@ public class FinPrice extends AbstractFinDataPoint {
 	public Integer[] getParameter() {
 		return new Integer[0];
 	}
+
+	@Override
+	public String toString() {
+		return "FinPrice [getIsin()=" + getIsin() + ", getDate()=" + getDate() + ", getValue()=" + getValue()
+				+ ", getId()=" + getId() + "]";
+	}
+	
+	
 }

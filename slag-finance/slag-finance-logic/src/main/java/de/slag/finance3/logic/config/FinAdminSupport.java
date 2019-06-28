@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
 
 public final class FinAdminSupport {
@@ -33,14 +34,15 @@ public final class FinAdminSupport {
 	}
 
 	public static Map<String, String> getAll(String startWith) {
-		final List<String> keys = MAP.keySet().stream().filter(key -> key.startsWith(startWith)).collect(Collectors.toList());
+		final List<String> keys = MAP.keySet().stream().filter(key -> key.startsWith(startWith))
+				.collect(Collectors.toList());
 		final HashMap<String, String> subMap = new HashMap<>();
-		keys.forEach(key-> subMap.put(key, MAP.get(key)));
+		keys.forEach(key -> subMap.put(key, MAP.get(key)));
 		return subMap;
 	}
 
 	public static String getSafe(String key) {
-		return FinAdminSupport.get(key).orElseThrow(() -> new NoSuchElementException(key));
+		return get(key).orElseThrow(() -> new BaseException("not administrated: " + key));
 	}
 
 	public static Optional<String> get(String key) {

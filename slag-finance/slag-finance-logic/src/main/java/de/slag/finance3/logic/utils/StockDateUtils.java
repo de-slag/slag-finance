@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import de.slag.common.utils.DateUtils;
+
 public class StockDateUtils {
 
 	private static final Collection<DayOfWeek> WEEKEND = Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
@@ -27,7 +29,7 @@ public class StockDateUtils {
 		return arrayList;
 	}
 
-	private static boolean isStockDay(LocalDate date) {
+	public static boolean isStockDay(LocalDate date) {
 		final DayOfWeek dayOfWeek = date.getDayOfWeek();
 		if (WEEKEND.contains(dayOfWeek)) {
 			return false;
@@ -43,10 +45,40 @@ public class StockDateUtils {
 		}
 		if (month == Month.DECEMBER) {
 			if (CHRISTMAS_AND_YEARSEND.contains(dayOfMonth)) {
-				return false;				
+				return false;
 			}
 		}
 
+		final LocalDate easterSunday = DateUtils.getEasterSunday(date.getYear());
+		if (easterSunday.equals(date)) {
+			return false;
+		}
+
+		final LocalDate easterMonday = easterSunday.plusDays(1);
+		if (easterMonday.equals(date)) {
+			return false;
+		}
+		
+		final LocalDate goodFriday = easterSunday.minusDays(2);
+		if (goodFriday.equals(date)) {
+			return false;
+		}
+
+		final LocalDate whitmonday = easterSunday.plusDays(50);
+		if (whitmonday.equals(date)) {
+			return false;
+		}
+
+		final LocalDate mayDay = LocalDate.of(date.getYear(), 5, 1);
+		if (mayDay.equals(date)) {
+			return false;
+		}
+		
+		final LocalDate germanUnificationDay = LocalDate.of(date.getYear(), 10, 3);
+		if (germanUnificationDay.equals(date)) {
+			return false;
+		}
+		
 		return true;
 	}
 }

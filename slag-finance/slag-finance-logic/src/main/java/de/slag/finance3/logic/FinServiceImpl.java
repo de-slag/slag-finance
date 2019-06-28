@@ -1,35 +1,45 @@
 package de.slag.finance3.logic;
 
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
+import de.slag.common.base.SlagProperties;
+import de.slag.common.base.event.EventBus;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.FinPriceDao;
+import de.slag.finance.FinSmaDao;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.data.model.Kpi;
+import de.slag.finance.logic.FinStockDateUtils;
 import de.slag.finance.model.AbstractFinDataPoint;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
 import de.slag.finance.model.IsinWkn;
 import de.slag.finance3.AvailableProperties;
+import de.slag.finance3.events.DataImportedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
 import de.slag.finance3.logic.config.FinAdminSupport;
-import de.slag.finance3.logic.importer.FinImportService;
+import de.slag.finance3.logic.utils.StockDateUtils;
 
 @Service
 public class FinServiceImpl implements FinService {
@@ -45,8 +55,31 @@ public class FinServiceImpl implements FinService {
 	@Resource
 	private XiDataDao xiDataDao;
 
+	@Resource
+	private FinSmaDao finSmaDao;
+
+	@PostConstruct
+	public void setUp() {
+		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_START_DATE);
+		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_MAX_PARAMETER);
+	}
+
 	@Override
 	public AbstractFinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters) {
+		final String string = SlagProperties.get(AvailableProperties.ALLOVER_START_DATE);
+		if (StringUtils.isEmpty(string)) {
+			throw new BaseException("not adminstrated: " + AvailableProperties.ALLOVER_START_DATE);
+		}
+		final Date parse;
+		try {
+			parse = new SimpleDateFormat("yyyy-MM-dd").parse(string);
+		} catch (ParseException e) {
+			throw new BaseException(e);
+		}
+		if (date.isBefore(DateUtils.toLocalDate(parse))) {
+			throw new BaseException("date before allover start date: " + date);
+		}
+
 		switch (kpi) {
 		case PRICE:
 			final Optional<FinDataPoint> optional = Optional.empty();
@@ -65,7 +98,7 @@ public class FinServiceImpl implements FinService {
 	public void importData() {
 		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
 		finPriceImportRunner.run();
-
+		EventBus.occure(new DataImportedEvent());
 	}
 
 	@Override
@@ -106,6 +139,27 @@ public class FinServiceImpl implements FinService {
 	@Override
 	public void calcAllAdministered() {
 		final List<String> admKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS).split(";"));
+
+		final Date parse;
+		try {
+			parse = new SimpleDateFormat("yyyy-MM-dd")
+					.parse(FinAdminSupport.getSafe(AvailableProperties.ALLOVER_START_DATE));
+		} catch (ParseException e) {
+			throw new BaseException(e);
+		}
+
+		final LocalDate alloverStartDate = DateUtils.toLocalDate(parse);
+
+		LocalDate current = LocalDate.now().minusDays(1);
+		Collection<LocalDate> allDates = new ArrayList<>();
+		while (current.isAfter(alloverStartDate)) {
+			allDates.add(current);
+			current = current.minusDays(1);
+		}
+
+		final List<LocalDate> stockDays = allDates.stream().filter(day -> FinStockDateUtils.isStockDay(day))
+				.collect(Collectors.toList());
+
 		admKpis.forEach(admKpi -> {
 			LOG.info(admKpi);
 			String[] split = admKpi.split("_");
@@ -118,51 +172,50 @@ public class FinServiceImpl implements FinService {
 
 			final Collection<Long> allIds = isinWknDao.findAllIds();
 
-			allIds.forEach(id -> {
-				final IsinWkn isinWkn = isinWknDao.loadById(id).get();
-				calc(isinWkn.getIsin(), LocalDate.now(), kpi, parameters.toArray(new Integer[0]));
-
+			final List<IsinWkn> isinWkns = allIds.stream()
+				.map(id -> isinWknDao.loadById(id))
+				.map(v -> v.get())
+				.collect(Collectors.toList());
+			
+			isinWkns.forEach(isinWkn -> {
+				stockDays.forEach(stockDay -> {
+					calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0]));					
+				});
 			});
 		});
 	}
 
 	private FinDataStore getDataStore() {
-		throw new UnsupportedOperationException("not implemented yet");
-//		return new FinDataStore() {
-//
-//			@Override
-//			public void put(AbstractFinDataPoint dp) {
-//				finPriceDao.save(dp);
-//			}
-//
-//			@Override
-//			public Optional<AbstractFinDataPoint> get(String isin, LocalDate date, Kpi kpi, Integer... params) {
-//				Collection<Long> findAllIds = finPriceDao.findAllIds();
-//
-//				Class<? extends AbstractFinDataPoint> clazz = determineClass(kpi);
-//
-//				return findAllIds.stream()
-//					.map(id -> finPriceDao.loadById(id))
-//					.filter(v -> v.isPresent())
-//					.map(v -> v.get())
-//					.filter(v -> clazz.isInstance(v))
-//					.filter(v -> v.getDate().equals(DateUtils.toDate(date)))
-//					.filter(v -> v.getIsin().equals(isin))
-//					.filter(v -> Arrays.deepEquals(v.getParameter(), params))
-//					.findAny();
-//			}
-//
-//			private Class<? extends AbstractFinDataPoint> determineClass(Kpi kpi) {
-//				switch (kpi) {
-//				case PRICE:
-//					return FinPrice.class;
-//				case SMA:
-//					return FinSma.class;
-//				default:
-//					throw new BaseException("not supported: " + kpi);
-//				}
-//			}
-//		};
+		return new FinDataStore() {
+
+			@Override
+			public void put(AbstractFinDataPoint dp) {
+				if (dp instanceof FinPrice) {
+					finPriceDao.save((FinPrice) dp);
+				} else if (dp instanceof FinSma) {
+					finSmaDao.save((FinSma) dp);
+				} else {
+					throw new UnsupportedOperationException();
+				}
+				LOG.info(dp);
+
+			}
+
+			@Override
+			public Optional<AbstractFinDataPoint> get(String isin, LocalDate date, Kpi kpi, Integer... params) {
+				switch (kpi) {
+				case PRICE:
+					final Optional<FinPrice> loadPriceBy = finPriceDao.loadPriceBy(isin, DateUtils.toDate(date));
+					if (!loadPriceBy.isPresent()) {
+						throw new BaseException("no price found for: " + isin + ", " + date);
+					}
+					return Optional.of(loadPriceBy.get());
+
+				default:
+					throw new UnsupportedOperationException();
+				}
+			}
+		};
 	}
 
 	@Override

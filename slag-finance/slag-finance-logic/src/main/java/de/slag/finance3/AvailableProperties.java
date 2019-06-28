@@ -10,5 +10,10 @@ public interface AvailableProperties {
 	String DATA_WKN_ISINS = "finance.data.wknisins";
 	
 	String CALC_KPIS = "finance.calc.kpis";
+	
+	String ALLOVER_START_DATE = "finance.allover.start.date";
+	
+	String ALLOVER_MAX_PARAMETER = "finance.allover.max.parameter";
+
 
 }

@@ -11,5 +11,7 @@ public interface FinDataStore {
 	Optional<AbstractFinDataPoint> get(String isin, LocalDate date, Kpi kpi, Integer... params);
 
 	void put(AbstractFinDataPoint dp);
+	
+	
 
 }

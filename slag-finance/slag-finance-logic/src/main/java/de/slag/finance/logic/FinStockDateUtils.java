@@ -29,7 +29,7 @@ public class FinStockDateUtils {
 		return arrayList;
 	}
 
-	private static boolean isStockDay(LocalDate date) {
+	public static boolean isStockDay(LocalDate date) {
 		final DayOfWeek dayOfWeek = date.getDayOfWeek();
 		if (WEEKEND.contains(dayOfWeek)) {
 			return false;

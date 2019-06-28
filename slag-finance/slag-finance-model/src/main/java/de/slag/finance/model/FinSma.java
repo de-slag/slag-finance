@@ -53,7 +53,12 @@ public class FinSma extends AbstractFinDataPoint {
 			finSma.setParameter(parameter.get());
 			return finSma;
 		}
+	}
 
+	@Override
+	public String toString() {
+		return "FinSma [parameter=" + parameter + ", getIsin()=" + getIsin() + ", getDate()=" + getDate()
+				+ ", getValue()=" + getValue() + ", getId()=" + getId() + "]";
 	}
 
 }
