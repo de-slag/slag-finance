@@ -11,8 +11,8 @@ public class FinSma extends AbstractFinDataPoint {
 
 	private Integer parameter;
 
-	public Integer getParameter() {
-		return parameter;
+	public Integer[] getParameter() {
+		return new Integer[] { parameter };
 	}
 
 	public void setParameter(Integer parameter) {
@@ -39,7 +39,7 @@ public class FinSma extends AbstractFinDataPoint {
 			this.value = Optional.of(value);
 			return this;
 		}
-		
+
 		public Builder parameter(Integer parameter) {
 			this.parameter = Optional.of(parameter);
 			return this;
