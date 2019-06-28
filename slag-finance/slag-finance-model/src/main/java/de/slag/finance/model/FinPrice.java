@@ -38,4 +38,9 @@ public class FinPrice extends AbstractFinDataPoint {
 		}
 
 	}
+
+	@Override
+	public Integer[] getParameter() {
+		return new Integer[0];
+	}
 }
