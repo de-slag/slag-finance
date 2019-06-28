@@ -41,7 +41,7 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private FinPriceDao finPriceDao;
-	
+
 	@Resource
 	private XiDataDao xiDataDao;
 
@@ -63,9 +63,9 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void importData() {
-		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao,xiDataDao);
+		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
 		finPriceImportRunner.run();
-		
+
 	}
 
 	@Override
@@ -166,9 +166,9 @@ public class FinServiceImpl implements FinService {
 	}
 
 	@Override
-	public void stagetData(Path path) {
-		final FinRawDataStageRunner stageRunner = new FinRawDataStageRunner(path, xiDataDao);
+	public void stageData(Path path) {
+		final FinRawDataStageRunner stageRunner = new FinRawDataStageRunner(path, xiDataDao, isinWknDao);
 		stageRunner.run();
-		
+
 	}
 }
