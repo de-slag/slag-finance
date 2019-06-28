@@ -121,7 +121,7 @@ public class FinServiceImpl implements FinService {
 			final Collection<Long> allIds = isinWknDao.findAllIds();
 
 			allIds.forEach(id -> {
-				final IsinWkn isinWkn = isinWknDao.loadById(id).orElseThrow();
+				final IsinWkn isinWkn = isinWknDao.loadById(id).get();
 				calc(isinWkn.getIsin(), LocalDate.now(), kpi, parameters.toArray(new Integer[0]));
 
 			});

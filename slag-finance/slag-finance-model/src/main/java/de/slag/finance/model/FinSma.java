@@ -47,10 +47,10 @@ public class FinSma extends AbstractFinDataPoint {
 
 		public FinSma build() {
 			final FinSma finSma = new FinSma();
-			finSma.setIsin(isin.orElseThrow());
-			finSma.setDate(date.orElseThrow());
-			finSma.setValue(value.orElseThrow());
-			finSma.setParameter(parameter.orElseThrow());
+			finSma.setIsin(isin.get());
+			finSma.setDate(date.get());
+			finSma.setValue(value.get());
+			finSma.setParameter(parameter.get());
 			return finSma;
 		}
 

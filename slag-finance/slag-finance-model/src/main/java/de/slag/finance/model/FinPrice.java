@@ -31,9 +31,9 @@ public class FinPrice extends AbstractFinDataPoint {
 
 		public FinPrice build() {
 			final FinPrice finPrice = new FinPrice();
-			finPrice.setIsin(isin.orElseThrow());
-			finPrice.setDate(date.orElseThrow());
-			finPrice.setValue(value.orElseThrow());
+			finPrice.setIsin(isin.get());
+			finPrice.setDate(date.get());
+			finPrice.setValue(value.get());
 			return finPrice;
 		}
 
