@@ -3,6 +3,7 @@ package de.slag.finance.app.test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ public class FinContextTestApp {
 
 	private FinSmaDao finSmaDao;
 
+	private StringBuffer eventLogger;
+
 	public static void main(String[] args) {
 		LoggingUtils.activateLogging();
 		final FinContextTestApp app = new FinContextTestApp();
@@ -42,7 +45,7 @@ public class FinContextTestApp {
 		try {
 			app.setUp();
 			app.run();
-			app.test();
+			app.tearDown();
 		} catch (Throwable t) {
 			LOG.error("error execution", t);
 			System.exit(1);
@@ -69,6 +72,9 @@ public class FinContextTestApp {
 		finSmaDao = SlagContext.getBean(FinSmaDao.class);
 
 		LOG.info("set up...done.");
+
+		eventLogger = new StringBuffer();
+
 		EventBus.addAction(new EventAction() {
 
 			@Override
@@ -87,11 +93,19 @@ public class FinContextTestApp {
 
 			}
 		});
+
+		EventBus.addAction(new EventAction() {
+
+			@Override
+			public void run(Event event) {
+				eventLogger.append(LocalDateTime.now() + ": " + event.getInfo() + "\n");
+
+			}
+		});
 	}
 
-	public void test() {
-		final Collection<Long> findAllIds = finSmaDao.findAllIds();
-		LOG.info("SMAs found: " + findAllIds.size());
+	public void tearDown() {
+		LOG.info("\n" + eventLogger.toString());
 	}
 
 	public void run() {

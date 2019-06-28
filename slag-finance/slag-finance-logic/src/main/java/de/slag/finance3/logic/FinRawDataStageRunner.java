@@ -16,12 +16,14 @@ import org.apache.commons.logging.LogFactory;
 
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
+import de.slag.common.base.event.EventBus;
 import de.slag.common.model.XiData;
 import de.slag.common.utils.CsvUtils;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.model.IsinWkn;
 import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.Constants;
+import de.slag.finance3.events.DataStagedEvent;
 import de.slag.finance3.logic.config.FinAdminSupport;
 
 public class FinRawDataStageRunner implements Runnable {
@@ -33,8 +35,10 @@ public class FinRawDataStageRunner implements Runnable {
 	private final Path basePath;
 
 	private final XiDataDao xiDataDao;
-	
+
 	private final IsinWknDao isinWknDao;
+
+	private int count;
 
 	public FinRawDataStageRunner(Path basePath, XiDataDao xiDataDao, IsinWknDao isinWknDao) {
 		super();
@@ -50,11 +54,12 @@ public class FinRawDataStageRunner implements Runnable {
 		} catch (IOException e) {
 			throw new BaseException(e);
 		}
+		EventBus.occure(new DataStagedEvent("data staged: " + count));
 	}
 
 	private void run0() throws IOException {
 		final Collection<Path> stageDirectories = determineStageDirectories();
-		
+
 		LOG.info(String.format("%s directories to stage", stageDirectories.size()));
 
 		stageDirectories.forEach(stageDirectory -> {
@@ -78,20 +83,15 @@ public class FinRawDataStageRunner implements Runnable {
 
 	private Collection<Path> determineStageDirectories() {
 		final Collection<IsinWkn> allIsinWkns = isinWknDao.findAll();
-		
+
 		final String absolutePath = basePath.toFile().getAbsolutePath();
 		final String normalizedPathString = normalizedPathString(absolutePath);
-		
-		return allIsinWkns.stream()
-			.map(isinWkn -> isinWkn.getIsin())
-			.map(isin -> normalizedPathString + "/" + isin)
-			.map(absolutePathString -> new File(absolutePathString))
-			.filter(file -> file.exists())
-			.filter(file -> file.isDirectory())
-			.map(file -> file.toPath())
-			.collect(Collectors.toList());		
+
+		return allIsinWkns.stream().map(isinWkn -> isinWkn.getIsin()).map(isin -> normalizedPathString + "/" + isin)
+				.map(absolutePathString -> new File(absolutePathString)).filter(file -> file.exists())
+				.filter(file -> file.isDirectory()).map(file -> file.toPath()).collect(Collectors.toList());
 	}
-	
+
 	private String normalizedPathString(String notNormalizedPathString) {
 		if (notNormalizedPathString.contains("\\")) {
 			return notNormalizedPathString.replace("\\", "/");
@@ -100,7 +100,7 @@ public class FinRawDataStageRunner implements Runnable {
 	}
 
 	private void stage(File csvFile) {
-		final String absolutePath = csvFile.getAbsolutePath();		
+		final String absolutePath = csvFile.getAbsolutePath();
 		String[] split = normalizedPathString(absolutePath).split("/");
 		int preLast = split.length - 2;
 		String isin = split[preLast];
@@ -129,6 +129,7 @@ public class FinRawDataStageRunner implements Runnable {
 		xiData.setType(Constants.FIN_PRICE_EXCHANGE_IMPORT_TYPE);
 		xiData.setValue(String.join(";", values));
 		xiDataDao.save(xiData);
+		count++;
 	}
 
 	private void assertNoInvalidCharacters(String s) {

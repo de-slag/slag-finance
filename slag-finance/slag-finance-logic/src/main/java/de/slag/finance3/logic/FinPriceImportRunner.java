@@ -13,9 +13,11 @@ import org.apache.commons.logging.LogFactory;
 
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
+import de.slag.common.base.event.EventBus;
 import de.slag.common.model.XiData;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance.model.FinPrice;
+import de.slag.finance3.events.DataImportedEvent;
 
 public class FinPriceImportRunner implements Runnable {
 
@@ -44,8 +46,6 @@ public class FinPriceImportRunner implements Runnable {
 		start = System.currentTimeMillis();
 		final Collection<Long> allIds = xiDataDao.findAllIds();
 
-		LOG.info(String.format("%s data sets staged", allIds.size()));
-
 		allIds.forEach(t -> {
 			try {
 				importData(t);
@@ -54,7 +54,7 @@ public class FinPriceImportRunner implements Runnable {
 			}
 		});
 		end = System.currentTimeMillis();
-		LOG.info(String.format("%s data sets imported, took %s ms", imported, end - start));
+		EventBus.occure(new DataImportedEvent("data imported: " + imported + ", took (ms) "+ (end - start)));
 	}
 
 	private void importData(Long xiId) throws ParseException {

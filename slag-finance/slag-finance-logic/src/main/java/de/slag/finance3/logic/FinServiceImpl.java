@@ -7,9 +7,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -36,10 +39,11 @@ import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
 import de.slag.finance.model.IsinWkn;
 import de.slag.finance3.AvailableProperties;
+import de.slag.finance3.events.CalculationsDoneEvent;
+import de.slag.finance3.events.CalulationsPreparedEvent;
 import de.slag.finance3.events.DataImportedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
 import de.slag.finance3.logic.config.FinAdminSupport;
-import de.slag.finance3.logic.utils.StockDateUtils;
 
 @Service
 public class FinServiceImpl implements FinService {
@@ -98,7 +102,7 @@ public class FinServiceImpl implements FinService {
 	public void importData() {
 		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
 		finPriceImportRunner.run();
-		EventBus.occure(new DataImportedEvent());
+
 	}
 
 	@Override
@@ -160,6 +164,8 @@ public class FinServiceImpl implements FinService {
 		final List<LocalDate> stockDays = allDates.stream().filter(day -> FinStockDateUtils.isStockDay(day))
 				.collect(Collectors.toList());
 
+		final List<Runnable> tasks = new ArrayList<>();
+
 		admKpis.forEach(admKpi -> {
 			LOG.info(admKpi);
 			String[] split = admKpi.split("_");
@@ -172,17 +178,43 @@ public class FinServiceImpl implements FinService {
 
 			final Collection<Long> allIds = isinWknDao.findAllIds();
 
-			final List<IsinWkn> isinWkns = allIds.stream()
-				.map(id -> isinWknDao.loadById(id))
-				.map(v -> v.get())
-				.collect(Collectors.toList());
-			
+			final List<IsinWkn> isinWkns = allIds.stream().map(id -> isinWknDao.loadById(id)).map(v -> v.get())
+					.collect(Collectors.toList());
+
 			isinWkns.forEach(isinWkn -> {
 				stockDays.forEach(stockDay -> {
-					calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0]));					
+
+					final Runnable runner = new Runnable() {
+
+						@Override
+						public void run() {
+							calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0]));
+						}
+					};
+					tasks.add(runner);
 				});
+
 			});
 		});
+
+		EventBus.occure(new CalulationsPreparedEvent("tasks: " + tasks.size()));
+
+		final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(4);
+		Collections.shuffle(tasks);
+
+		final long start = System.currentTimeMillis();
+
+		tasks.forEach(scheduledThreadPoolExecutor::execute);
+		scheduledThreadPoolExecutor.shutdown();
+		try {
+			scheduledThreadPoolExecutor.awaitTermination(1, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			throw new BaseException(e);
+		}
+
+		EventBus.occure(new CalculationsDoneEvent(
+				"took (ms): " + DateUtils.millisecondsToHumanReadable(System.currentTimeMillis() - start)));
+
 	}
 
 	private FinDataStore getDataStore() {
