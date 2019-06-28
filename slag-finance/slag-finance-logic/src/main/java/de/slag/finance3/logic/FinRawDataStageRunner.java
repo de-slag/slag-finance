@@ -49,14 +49,25 @@ public class FinRawDataStageRunner implements Runnable {
 
 	private void stage(File csvFile) {
 		final String absolutePath = csvFile.getAbsolutePath();
+		String importPath;
+		if(absolutePath.contains("\\")) {
+			importPath = absolutePath.replace("\\", "/");
+		} else {
+			importPath = absolutePath;
+		}
+		
+		String[] split = importPath.split("/");
+		int preLast = split.length - 2;
+		String isin = split[preLast];
+
 		LOG.info(String.format("stage %s...", absolutePath));
 		Collection<String> header = CsvUtils.getHeader(absolutePath);
 		Collection<CSVRecord> records = CsvUtils.getRecords(absolutePath).stream().filter(CsvUtils.FILTER_NO_EMPTY)
 				.collect(Collectors.toList());
-		records.forEach(rec -> stage(header, rec));
+		records.forEach(rec -> stage(header, rec, isin));
 	}
 
-	private void stage(Collection<String> header, CSVRecord record) {
+	private void stage(Collection<String> header, CSVRecord record, String isin) {
 
 		final Collection<String> values = new ArrayList<>();
 		header.forEach(headColumn -> {
@@ -67,6 +78,8 @@ public class FinRawDataStageRunner implements Runnable {
 
 			values.add(headColumn + "=" + value);
 		});
+		values.add("Isin=" + isin);
+
 		final XiData xiData = new XiData();
 		xiData.setType(Constants.FIN_PRICE_EXCHANGE_IMPORT_TYPE);
 		xiData.setValue(String.join(";", values));

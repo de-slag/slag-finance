@@ -63,7 +63,6 @@ public class FinContextTestApp {
 		finService.assertIsinWkn();
 		final Path path = Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
 		finService.stagetData(path);
-		finService.importData();
 
 		xiDataDao.findAllIds().stream()
 			.map(id -> xiDataDao.loadById(id))
@@ -71,6 +70,7 @@ public class FinContextTestApp {
 			.map(xi -> xi.get())
 			.forEach(xi -> LOG.info("import: " + xi));
 
+		finService.importData();
 	}
 
 }

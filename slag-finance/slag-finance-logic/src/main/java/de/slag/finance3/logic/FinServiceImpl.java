@@ -65,6 +65,8 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void importData() {
+		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finDataPointDao,xiDataDao);
+		finPriceImportRunner.run();
 		
 	}
 

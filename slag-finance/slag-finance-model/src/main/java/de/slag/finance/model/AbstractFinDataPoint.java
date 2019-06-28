@@ -3,11 +3,13 @@ package de.slag.finance.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
 
 import de.slag.common.model.EntityBean;
 
 @MappedSuperclass
+
 public abstract class AbstractFinDataPoint extends EntityBean {
 
 	private String isin;
