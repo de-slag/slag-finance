@@ -4,13 +4,15 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 
 import de.slag.finance.data.model.Kpi;
-import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.AbstractFinDataPoint;
 
 public interface FinService {
 	
-	FinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters);
+	AbstractFinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters);
 	
-	void importData(Path fromPath);
+	void stagetData(Path path);
+	
+	void importData();
 
 	void assertIsinWkn();
 	

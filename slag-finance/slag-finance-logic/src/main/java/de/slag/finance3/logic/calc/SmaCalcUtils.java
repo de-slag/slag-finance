@@ -7,36 +7,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.slag.common.base.BaseException;
+import de.slag.common.utils.DateUtils;
 import de.slag.common.utils.MathUtils;
 import de.slag.finance.data.model.Kpi;
-import de.slag.finance3.logic.FinDataProvider;
+import de.slag.finance.model.AbstractFinDataPoint;
+import de.slag.finance.model.FinSma;
+import de.slag.finance3.logic.FinDataStore;
 import de.slag.finance3.logic.utils.StockDateUtils;
 
 public class SmaCalcUtils {
 
-	private static final int[] EMPTY_PARAMS = new int[0];
-
-	public static BigDecimal calc(String isin, LocalDate date, Kpi kpi, int days, FinDataProvider dataProvider) {
+	public static FinSma calc(String isin, LocalDate date, Kpi kpi, int days, FinDataStore dataStore) {
 		final Collection<LocalDate> stockDays = StockDateUtils.determineStockDays(date, days);
 
-		final List<BigDecimal> values = stockDays.stream()
-				.map(day -> dataProvider.apply(isin, day, Kpi.PRICE, EMPTY_PARAMS))
-				.filter(v -> v.isPresent())
-				.map(v -> v.get())
-				.collect(Collectors.toList());
+		final List<AbstractFinDataPoint> values = stockDays.stream().map(day -> dataStore.get(isin, day, Kpi.PRICE))
+				.filter(v -> v.isPresent()).map(v -> v.get()).collect(Collectors.toList());
 
 		if (values.size() != stockDays.size()) {
 			final List<LocalDate> daysMissing = stockDays.stream()
-					.filter(day -> !dataProvider.apply(isin, day, Kpi.PRICE, EMPTY_PARAMS)
-							.isPresent())
-					.collect(Collectors.toList());
+					.filter(day -> !dataStore.get(isin, day, Kpi.PRICE).isPresent()).collect(Collectors.toList());
 
 			if (!daysMissing.isEmpty()) {
-				throw new BaseException(String.format("data is missing for dates: %$", daysMissing));
+				throw new BaseException(String.format("data is missing for dates: %s", daysMissing));
 			}
 		}
 
-		return MathUtils.average(values);
+		final BigDecimal average = MathUtils
+				.average(values.stream().map(v -> v.getValue()).collect(Collectors.toList()));
+		final FinSma sma = new FinSma.Builder().date(DateUtils.toDate(date)).isin(isin).parameter(days).value(average)
+				.build();
+		dataStore.put(sma);
+		return sma;
 	}
 
 }
