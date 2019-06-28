@@ -28,7 +28,6 @@ public class FinContextTestApp {
 		LoggingUtils.activateLogging();
 		final FinContextTestApp app = new FinContextTestApp();
 
-		// TODO tear down if error
 		try {
 			app.setUp();
 			app.test();
