@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.utils.DateUtils;
-import de.slag.finance.FinDataPointDao;
+import de.slag.finance.FinPriceDao;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.AbstractFinDataPoint;
@@ -36,13 +36,11 @@ public class FinServiceImpl implements FinService {
 
 	private static final Log LOG = LogFactory.getLog(FinServiceImpl.class);
 
-	private FinImportService finImportService;
-
 	@Resource
 	private IsinWknDao isinWknDao;
 
 	@Resource
-	private FinDataPointDao finDataPointDao;
+	private FinPriceDao finPriceDao;
 	
 	@Resource
 	private XiDataDao xiDataDao;
@@ -65,7 +63,7 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void importData() {
-		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finDataPointDao,xiDataDao);
+		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao,xiDataDao);
 		finPriceImportRunner.run();
 		
 	}
@@ -129,41 +127,42 @@ public class FinServiceImpl implements FinService {
 	}
 
 	private FinDataStore getDataStore() {
-		return new FinDataStore() {
-
-			@Override
-			public void put(AbstractFinDataPoint dp) {
-				finDataPointDao.save(dp);
-			}
-
-			@Override
-			public Optional<AbstractFinDataPoint> get(String isin, LocalDate date, Kpi kpi, Integer... params) {
-				Collection<Long> findAllIds = finDataPointDao.findAllIds();
-
-				Class<? extends AbstractFinDataPoint> clazz = determineClass(kpi);
-
-				return findAllIds.stream()
-					.map(id -> finDataPointDao.loadById(id))
-					.filter(v -> v.isPresent())
-					.map(v -> v.get())
-					.filter(v -> clazz.isInstance(v))
-					.filter(v -> v.getDate().equals(DateUtils.toDate(date)))
-					.filter(v -> v.getIsin().equals(isin))
-					.filter(v -> Arrays.deepEquals(v.getParameter(), params))
-					.findAny();
-			}
-
-			private Class<? extends AbstractFinDataPoint> determineClass(Kpi kpi) {
-				switch (kpi) {
-				case PRICE:
-					return FinPrice.class;
-				case SMA:
-					return FinSma.class;
-				default:
-					throw new BaseException("not supported: " + kpi);
-				}
-			}
-		};
+		throw new UnsupportedOperationException("not implemented yet");
+//		return new FinDataStore() {
+//
+//			@Override
+//			public void put(AbstractFinDataPoint dp) {
+//				finPriceDao.save(dp);
+//			}
+//
+//			@Override
+//			public Optional<AbstractFinDataPoint> get(String isin, LocalDate date, Kpi kpi, Integer... params) {
+//				Collection<Long> findAllIds = finPriceDao.findAllIds();
+//
+//				Class<? extends AbstractFinDataPoint> clazz = determineClass(kpi);
+//
+//				return findAllIds.stream()
+//					.map(id -> finPriceDao.loadById(id))
+//					.filter(v -> v.isPresent())
+//					.map(v -> v.get())
+//					.filter(v -> clazz.isInstance(v))
+//					.filter(v -> v.getDate().equals(DateUtils.toDate(date)))
+//					.filter(v -> v.getIsin().equals(isin))
+//					.filter(v -> Arrays.deepEquals(v.getParameter(), params))
+//					.findAny();
+//			}
+//
+//			private Class<? extends AbstractFinDataPoint> determineClass(Kpi kpi) {
+//				switch (kpi) {
+//				case PRICE:
+//					return FinPrice.class;
+//				case SMA:
+//					return FinSma.class;
+//				default:
+//					throw new BaseException("not supported: " + kpi);
+//				}
+//			}
+//		};
 	}
 
 	@Override

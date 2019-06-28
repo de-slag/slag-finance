@@ -8,11 +8,10 @@ import java.util.stream.Collectors;
 
 import de.slag.common.Dao;
 import de.slag.common.base.BaseException;
-import de.slag.finance.model.AbstractFinDataPoint;
 import de.slag.finance.model.FinPrice;
 
-public interface FinDataPointDao extends Dao<AbstractFinDataPoint> {
-
+public interface FinPriceDao extends Dao<FinPrice> {
+	
 	default Optional<FinPrice> loadPriceBy(String isin, Date date) {
 		Collection<Long> findAllIds = findAllIds();
 		final List<FinPrice> prices = findAllIds.stream()
@@ -29,4 +28,5 @@ public interface FinDataPointDao extends Dao<AbstractFinDataPoint> {
 		}
 		return prices.stream().findAny();
 	}
+
 }

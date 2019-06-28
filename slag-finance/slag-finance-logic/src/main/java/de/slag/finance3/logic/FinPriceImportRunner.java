@@ -5,26 +5,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.model.XiData;
-import de.slag.finance.FinDataPointDao;
+import de.slag.finance.FinPriceDao;
+import de.slag.finance.data.FinDataPointDao;
 import de.slag.finance.model.FinPrice;
 
 public class FinPriceImportRunner implements Runnable {
 
 	private static final String DD_MM_YYYY = "dd.MM.yyyy";
 
-	private final FinDataPointDao finDataPointDao;
+	private final FinPriceDao finPriceDao;
 
 	private final XiDataDao xiDataDao;
 
-	public FinPriceImportRunner(FinDataPointDao finDataPointDao, XiDataDao xiDataDao) {
+	public FinPriceImportRunner( FinPriceDao finPriceDao, XiDataDao xiDataDao) {
 		super();
-		this.finDataPointDao = finDataPointDao;
+		this.finPriceDao = finPriceDao;
 		this.xiDataDao = xiDataDao;
 	}
 
@@ -49,7 +49,7 @@ public class FinPriceImportRunner implements Runnable {
 		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DD_MM_YYYY);
 		final Date date = simpleDateFormat.parse(dateAsString);
 
-		if (finDataPointDao.loadPriceBy(isin, date).isPresent()) {
+		if (finPriceDao.loadPriceBy(isin, date).isPresent()) {
 			return;
 		}
 
@@ -57,7 +57,7 @@ public class FinPriceImportRunner implements Runnable {
 		final BigDecimal value = BigDecimal.valueOf(Double.valueOf(preformat));
 
 		FinPrice build = new FinPrice.Builder().date(date).value(value).isin(isin).build();
-		finDataPointDao.save(build);
+		finPriceDao.save(build);
 
 	}
 }
