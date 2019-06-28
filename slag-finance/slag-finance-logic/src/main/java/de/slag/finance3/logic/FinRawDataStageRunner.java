@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -16,21 +18,29 @@ import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.model.XiData;
 import de.slag.common.utils.CsvUtils;
+import de.slag.finance.IsinWknDao;
+import de.slag.finance.model.IsinWkn;
+import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.Constants;
+import de.slag.finance3.logic.config.FinAdminSupport;
 
 public class FinRawDataStageRunner implements Runnable {
 
 	private static final Log LOG = LogFactory.getLog(FinRawDataStageRunner.class);
 
-	private static final String INVALID_CHARACTERS = ";=";
+	private static final Collection<String> INVALID_CHARS = Arrays.asList(";", "=");
 
-	private final Path path;
+	private final Path basePath;
 
 	private final XiDataDao xiDataDao;
+	
+	private final IsinWknDao isinWknDao;
 
-	public FinRawDataStageRunner(Path path, XiDataDao xiDataDao) {
-		this.path = path;
+	public FinRawDataStageRunner(Path basePath, XiDataDao xiDataDao, IsinWknDao isinWknDao) {
+		super();
+		this.basePath = basePath;
 		this.xiDataDao = xiDataDao;
+		this.isinWknDao = isinWknDao;
 	}
 
 	@Override
@@ -43,20 +53,55 @@ public class FinRawDataStageRunner implements Runnable {
 	}
 
 	private void run0() throws IOException {
-		Files.walk(path).filter(Files::isRegularFile).filter(file -> file.toString().endsWith(".csv"))
-				.map(file -> file.toFile()).forEach(this::stage);
+		final Collection<Path> stageDirectories = determineStageDirectories();
+		
+		LOG.info(String.format("%s directories to stage", stageDirectories.size()));
+
+		stageDirectories.forEach(stageDirectory -> {
+			try {
+				stage(stageDirectory);
+			} catch (IOException e) {
+				throw new BaseException(e);
+			}
+		});
+
+	}
+
+	private void stage(Path stageDirectory) throws IOException {
+		final Collection<Path> csvFiles = Files.walk(stageDirectory).filter(Files::isRegularFile)
+				.filter(file -> file.toString().endsWith(".csv")).collect(Collectors.toList());
+
+		LOG.info(String.format("%s files to stage", csvFiles.size()));
+
+		csvFiles.stream().map(file -> file.toFile()).forEach(this::stage);
+	}
+
+	private Collection<Path> determineStageDirectories() {
+		final Collection<IsinWkn> allIsinWkns = isinWknDao.findAll();
+		
+		final String absolutePath = basePath.toFile().getAbsolutePath();
+		final String normalizedPathString = normalizedPathString(absolutePath);
+		
+		return allIsinWkns.stream()
+			.map(isinWkn -> isinWkn.getIsin())
+			.map(isin -> normalizedPathString + "/" + isin)
+			.map(absolutePathString -> new File(absolutePathString))
+			.filter(file -> file.exists())
+			.filter(file -> file.isDirectory())
+			.map(file -> file.toPath())
+			.collect(Collectors.toList());		
+	}
+	
+	private String normalizedPathString(String notNormalizedPathString) {
+		if (notNormalizedPathString.contains("\\")) {
+			return notNormalizedPathString.replace("\\", "/");
+		}
+		return notNormalizedPathString;
 	}
 
 	private void stage(File csvFile) {
-		final String absolutePath = csvFile.getAbsolutePath();
-		String importPath;
-		if(absolutePath.contains("\\")) {
-			importPath = absolutePath.replace("\\", "/");
-		} else {
-			importPath = absolutePath;
-		}
-		
-		String[] split = importPath.split("/");
+		final String absolutePath = csvFile.getAbsolutePath();		
+		String[] split = normalizedPathString(absolutePath).split("/");
 		int preLast = split.length - 2;
 		String isin = split[preLast];
 
@@ -87,7 +132,10 @@ public class FinRawDataStageRunner implements Runnable {
 	}
 
 	private void assertNoInvalidCharacters(String s) {
-
+		INVALID_CHARS.forEach(c -> {
+			if (s.contains(c))
+				throw new BaseException(s + " contains " + c);
+		});
 	}
 
 }
