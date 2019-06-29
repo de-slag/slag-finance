@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,10 +20,8 @@ import de.slag.common.model.XiData;
 import de.slag.common.utils.CsvUtils;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.model.IsinWkn;
-import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.Constants;
 import de.slag.finance3.events.DataStagedEvent;
-import de.slag.finance3.logic.config.FinAdminSupport;
 
 public class FinRawDataStageRunner implements Runnable {
 
