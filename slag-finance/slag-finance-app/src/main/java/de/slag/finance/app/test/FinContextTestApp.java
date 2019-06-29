@@ -1,7 +1,5 @@
 package de.slag.finance.app.test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import org.apache.commons.logging.Log;
@@ -13,12 +11,9 @@ import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
-import de.slag.common.model.beans.SystemLog;
 import de.slag.common.model.beans.SystemLogDao;
-import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance3.logic.FinService;
-import de.slag.finance3.logic.FinServiceImpl;
 
 public class FinContextTestApp {
 
@@ -91,6 +86,7 @@ public class FinContextTestApp {
 
 	public void tearDown() {
 		LOG.info("\n" + eventLogger.toString());
+		systemLogDao.findAll().forEach(entry -> LOG.info(entry));
 	}
 
 	public void run() {

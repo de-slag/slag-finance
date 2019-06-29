@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
+import de.slag.common.base.SlagScheduledThreadPoolExecutorSupplier;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
 import de.slag.common.utils.DateUtils;
@@ -32,6 +33,7 @@ import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.api.AvailableProperties;
+import de.slag.finance.api.DataStagedEvent;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance.api.FinStageService;
 import de.slag.finance.data.model.Kpi;
@@ -73,7 +75,8 @@ public class FinServiceImpl implements FinService {
 	private Collection<FinStageService> stageServices() {
 		if (stageServices.isEmpty()) {
 			stageServices.add(SlagContext.getBean(FinStageService.class, "finOvStageServiceImpl"));
-			
+			stageServices.add(SlagContext.getBean(FinStageService.class, "finAvStageServiceImpl"));
+
 			if (stageServices.isEmpty()) {
 				throw new BaseException("no stage services found");
 			}
@@ -114,6 +117,7 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void importData() {
+		LOG.info("import data...");
 		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
 		finPriceImportRunner.run();
 
@@ -213,7 +217,9 @@ public class FinServiceImpl implements FinService {
 
 		EventBus.occure(new CalulationsPreparedEvent("tasks: " + tasks.size()));
 
-		final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(4);
+		final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new SlagScheduledThreadPoolExecutorSupplier()
+				.get();
+
 		Collections.shuffle(tasks);
 
 		final long start = System.currentTimeMillis();
@@ -283,7 +289,24 @@ public class FinServiceImpl implements FinService {
 	}
 
 	public void stageData() {
-		stageServices().forEach(service -> service.stage());
-	}
+		final Collection<Runnable> tasks = new ArrayList<>();
+		stageServices().forEach(service -> {
+			tasks.add(new Runnable() {
 
+				@Override
+				public void run() {
+					service.stage();
+				}
+			});
+		});
+		final ScheduledThreadPoolExecutor executor = new SlagScheduledThreadPoolExecutorSupplier().get();
+		tasks.forEach(executor::execute);
+		executor.shutdown();
+
+		try {
+			executor.awaitTermination(1, TimeUnit.HOURS);
+		} catch (InterruptedException e) {
+			throw new BaseException(e);
+		}
+	}
 }

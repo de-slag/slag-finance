@@ -1,6 +1,5 @@
 package de.slag.finance3.logic;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
 
 import de.slag.finance.data.model.Kpi;
