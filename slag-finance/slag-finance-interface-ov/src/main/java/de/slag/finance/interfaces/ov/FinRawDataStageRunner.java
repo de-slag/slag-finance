@@ -1,4 +1,4 @@
-package de.slag.finance3.logic;
+package de.slag.finance.interfaces.ov;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import de.slag.common.base.event.EventBus;
 import de.slag.common.model.XiData;
 import de.slag.common.utils.CsvUtils;
 import de.slag.finance.IsinWknDao;
+import de.slag.finance.api.Constants;
+import de.slag.finance.api.DataStagedEvent;
 import de.slag.finance.model.IsinWkn;
-import de.slag.finance3.Constants;
-import de.slag.finance3.events.DataStagedEvent;
 
 public class FinRawDataStageRunner implements Runnable {
 

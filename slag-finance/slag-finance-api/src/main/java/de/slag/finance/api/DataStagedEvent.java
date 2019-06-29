@@ -1,4 +1,4 @@
-package de.slag.finance3.events;
+package de.slag.finance.api;
 
 import de.slag.common.base.event.InfoEvent;
 

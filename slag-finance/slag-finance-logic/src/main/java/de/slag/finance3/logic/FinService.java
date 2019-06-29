@@ -10,7 +10,7 @@ public interface FinService {
 	
 	AbstractFinDataPoint calc(String isin, LocalDate date, Kpi kpi, Integer[] parameters);
 	
-	void stageData(Path path);
+	void stageData();
 	
 	void importData();
 

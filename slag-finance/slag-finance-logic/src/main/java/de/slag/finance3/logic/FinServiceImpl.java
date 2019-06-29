@@ -1,6 +1,5 @@
 package de.slag.finance3.logic;
 
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -27,10 +26,14 @@ import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
 import de.slag.common.base.event.EventBus;
+import de.slag.common.context.SlagContext;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
 import de.slag.finance.IsinWknDao;
+import de.slag.finance.api.AvailableProperties;
+import de.slag.finance.api.FinAdminSupport;
+import de.slag.finance.api.FinStageService;
 import de.slag.finance.data.model.Kpi;
 import de.slag.finance.logic.FinStockDateUtils;
 import de.slag.finance.model.AbstractFinDataPoint;
@@ -38,11 +41,9 @@ import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
 import de.slag.finance.model.IsinWkn;
-import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.events.CalculationsDoneEvent;
 import de.slag.finance3.events.CalulationsPreparedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
-import de.slag.finance3.logic.config.FinAdminSupport;
 
 @Service
 public class FinServiceImpl implements FinService {
@@ -61,10 +62,24 @@ public class FinServiceImpl implements FinService {
 	@Resource
 	private FinSmaDao finSmaDao;
 
+	private Collection<FinStageService> stageServices = new ArrayList<>();
+
 	@PostConstruct
 	public void setUp() {
 		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_START_DATE);
 		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_MAX_PARAMETER);
+	}
+
+	private Collection<FinStageService> stageServices() {
+		if (stageServices.isEmpty()) {
+			stageServices.add(SlagContext.getBean(FinStageService.class, "finOvStageServiceImpl"));
+			
+			if (stageServices.isEmpty()) {
+				throw new BaseException("no stage services found");
+			}
+		}
+		return stageServices;
+
 	}
 
 	@Override
@@ -257,7 +272,7 @@ public class FinServiceImpl implements FinService {
 				} else {
 					throw new BaseException("not supported: " + type);
 				}
-				if(!result.isPresent()) {
+				if (!result.isPresent()) {
 					return Optional.empty();
 				}
 				final AbstractFinDataPoint abstractFinDataPoint = result.get();
@@ -267,10 +282,8 @@ public class FinServiceImpl implements FinService {
 		};
 	}
 
-	@Override
-	public void stageData(Path path) {
-		final FinRawDataStageRunner stageRunner = new FinRawDataStageRunner(path, xiDataDao, isinWknDao);
-		stageRunner.run();
-
+	public void stageData() {
+		stageServices().forEach(service -> service.stage());
 	}
+
 }

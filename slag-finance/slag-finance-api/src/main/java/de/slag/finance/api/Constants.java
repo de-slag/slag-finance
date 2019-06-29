@@ -1,4 +1,4 @@
-package de.slag.finance3;
+package de.slag.finance.api;
 
 public interface Constants {
 	

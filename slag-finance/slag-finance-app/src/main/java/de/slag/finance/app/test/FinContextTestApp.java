@@ -3,12 +3,10 @@ package de.slag.finance.app.test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.slag.common.base.SlagConstants;
 import de.slag.common.base.event.Event;
 import de.slag.common.base.event.EventAction;
 import de.slag.common.base.event.EventBus;
@@ -17,10 +15,10 @@ import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
 import de.slag.common.model.beans.SystemLog;
 import de.slag.common.model.beans.SystemLogDao;
-import de.slag.common.utils.DateUtils;
-import de.slag.finance3.AvailableProperties;
+import de.slag.finance.api.AvailableProperties;
+import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance3.logic.FinService;
-import de.slag.finance3.logic.config.FinAdminSupport;
+import de.slag.finance3.logic.FinServiceImpl;
 
 public class FinContextTestApp {
 
@@ -31,7 +29,7 @@ public class FinContextTestApp {
 	private HibernateResource hibernateResource;
 
 	private StringBuffer eventLogger;
-	
+
 	private SystemLogDao systemLogDao;
 
 	public static void main(String[] args) {
@@ -40,10 +38,10 @@ public class FinContextTestApp {
 
 		try {
 			app.setUp();
-			
-			//app.test();
+
+			// app.test();
 			app.run();
-			
+
 			app.tearDown();
 		} catch (Throwable t) {
 			LOG.error("error execution", t);
@@ -55,7 +53,6 @@ public class FinContextTestApp {
 	}
 
 	public void setUp() {
-
 		LOG.info("set up...");
 		hibernateResource = SlagContext.getBean(HibernateResource.class);
 		if (!hibernateResource.isValid()) {
@@ -68,6 +65,10 @@ public class FinContextTestApp {
 		LOG.info(sb);
 
 		finService = SlagContext.getBean(FinService.class);
+
+		// FIXME hacky
+		// ((FinServiceImpl)finService).init();
+
 		systemLogDao = SlagContext.getBean(SystemLogDao.class);
 
 		LOG.info("set up...done.");
@@ -83,11 +84,9 @@ public class FinContextTestApp {
 			}
 		});
 	}
-	
+
 	public void test() {
-		SystemLog systemLog = new SystemLog();
-		systemLogDao.save(systemLog);
-		systemLog.getClass();
+
 	}
 
 	public void tearDown() {
@@ -96,8 +95,7 @@ public class FinContextTestApp {
 
 	public void run() {
 		finService.assertIsinWkn();
-		final Path path = Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
-		finService.stageData(path);
+		finService.stageData();
 		finService.importData();
 		finService.calcAllAdministered();
 

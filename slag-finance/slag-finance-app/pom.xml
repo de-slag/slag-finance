@@ -22,6 +22,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>de.slag.finance</groupId>
+			<artifactId>slag-finance-interface-ov</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-logging</artifactId>
 		</dependency>

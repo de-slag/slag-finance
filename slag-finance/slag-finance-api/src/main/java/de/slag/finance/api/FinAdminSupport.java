@@ -1,4 +1,4 @@
-package de.slag.finance3.logic.config;
+package de.slag.finance.api;
 
 import java.util.HashMap;
 import java.util.List;
