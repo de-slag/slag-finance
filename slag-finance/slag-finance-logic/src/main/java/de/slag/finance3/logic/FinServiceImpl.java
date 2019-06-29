@@ -41,7 +41,6 @@ import de.slag.finance.model.IsinWkn;
 import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.events.CalculationsDoneEvent;
 import de.slag.finance3.events.CalulationsPreparedEvent;
-import de.slag.finance3.events.DataImportedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
 import de.slag.finance3.logic.config.FinAdminSupport;
 
