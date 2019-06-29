@@ -20,7 +20,7 @@ class FinPriceBuilderTest {
 		assertNotNull(new FinPrice.Builder()
 				.isin(ISIN)
 				.date(DATE)
-				.value(VALUE)
+				.close(VALUE)
 				.build());
 
 	}
@@ -29,7 +29,7 @@ class FinPriceBuilderTest {
 	void testDate() {
 		Assertions.assertThrows(NoSuchElementException.class, () -> new FinPrice.Builder()
 				.isin(ISIN)
-				.value(VALUE)
+				.close(VALUE)
 				.build());
 	}
 
@@ -44,7 +44,7 @@ class FinPriceBuilderTest {
 	@Test
 	void testIsin() {
 		Assertions.assertThrows(NoSuchElementException.class, () -> new FinPrice.Builder()
-				.value(VALUE)
+				.close(VALUE)
 				.date(DATE)
 				.build());
 	}

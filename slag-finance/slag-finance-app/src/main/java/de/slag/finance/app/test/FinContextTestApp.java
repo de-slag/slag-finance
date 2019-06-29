@@ -3,16 +3,21 @@ package de.slag.finance.app.test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import de.slag.common.base.SlagConstants;
 import de.slag.common.base.event.Event;
 import de.slag.common.base.event.EventAction;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
+import de.slag.common.model.beans.SystemLog;
+import de.slag.common.model.beans.SystemLogDao;
+import de.slag.common.utils.DateUtils;
 import de.slag.finance3.AvailableProperties;
 import de.slag.finance3.logic.FinService;
 import de.slag.finance3.logic.config.FinAdminSupport;
@@ -26,6 +31,8 @@ public class FinContextTestApp {
 	private HibernateResource hibernateResource;
 
 	private StringBuffer eventLogger;
+	
+	private SystemLogDao systemLogDao;
 
 	public static void main(String[] args) {
 		LoggingUtils.activateLogging();
@@ -33,7 +40,10 @@ public class FinContextTestApp {
 
 		try {
 			app.setUp();
+			
+			//app.test();
 			app.run();
+			
 			app.tearDown();
 		} catch (Throwable t) {
 			LOG.error("error execution", t);
@@ -58,6 +68,7 @@ public class FinContextTestApp {
 		LOG.info(sb);
 
 		finService = SlagContext.getBean(FinService.class);
+		systemLogDao = SlagContext.getBean(SystemLogDao.class);
 
 		LOG.info("set up...done.");
 
@@ -71,6 +82,12 @@ public class FinContextTestApp {
 
 			}
 		});
+	}
+	
+	public void test() {
+		SystemLog systemLog = new SystemLog();
+		systemLogDao.save(systemLog);
+		systemLog.getClass();
 	}
 
 	public void tearDown() {

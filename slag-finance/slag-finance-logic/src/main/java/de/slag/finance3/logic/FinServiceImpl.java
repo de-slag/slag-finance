@@ -246,6 +246,24 @@ public class FinServiceImpl implements FinService {
 					throw new UnsupportedOperationException();
 				}
 			}
+
+			@Override
+			public <T extends AbstractFinDataPoint> Optional<T> get(Class<T> type, String isin, LocalDate date,
+					Integer... params) {
+
+				final Optional<AbstractFinDataPoint> result;
+				if (FinPrice.class.isAssignableFrom(type)) {
+					result = get(isin, date, Kpi.PRICE, params);
+				} else {
+					throw new BaseException("not supported: " + type);
+				}
+				if(!result.isPresent()) {
+					return Optional.empty();
+				}
+				final AbstractFinDataPoint abstractFinDataPoint = result.get();
+				return Optional.of(type.cast(abstractFinDataPoint));
+
+			}
 		};
 	}
 

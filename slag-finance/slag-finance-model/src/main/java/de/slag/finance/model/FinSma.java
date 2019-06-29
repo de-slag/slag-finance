@@ -4,12 +4,18 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 public class FinSma extends AbstractFinDataPoint {
 
+	@Basic
 	private Integer parameter;
+	
+	@Column(precision=7, scale=2)
+	private BigDecimal value;
 
 	public Integer[] getParameter() {
 		return new Integer[] { parameter };
@@ -59,6 +65,14 @@ public class FinSma extends AbstractFinDataPoint {
 	public String toString() {
 		return "FinSma [parameter=" + parameter + ", getIsin()=" + getIsin() + ", getDate()=" + getDate()
 				+ ", getValue()=" + getValue() + ", getId()=" + getId() + "]";
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;		
+	}
+
+	public BigDecimal getValue() {
+		return value;
 	}
 
 }

@@ -3,7 +3,13 @@ package de.slag.finance.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.lang.model.util.Elements.Origin;
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import de.slag.common.model.EntityBean;
 
@@ -11,9 +17,14 @@ import de.slag.common.model.EntityBean;
 
 public abstract class AbstractFinDataPoint extends EntityBean {
 
+	@Column
 	private String isin;
+	
+	@Temporal(TemporalType.DATE)
 	private Date date;
-	private BigDecimal value;
+	
+	@Enumerated(EnumType.STRING)
+	private DataOrigin origin;
 	
 	public abstract Integer[] getParameter();
 
@@ -32,13 +43,4 @@ public abstract class AbstractFinDataPoint extends EntityBean {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
-
 }

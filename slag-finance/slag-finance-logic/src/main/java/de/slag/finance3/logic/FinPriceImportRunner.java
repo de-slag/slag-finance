@@ -60,7 +60,7 @@ public class FinPriceImportRunner implements Runnable {
 	private void importData(Long xiId) throws ParseException {
 		final XiData xiData = xiDataDao.loadById(xiId).get();
 		final Properties properties = xiData.toProperties();
-		final String valueAsString = Objects.requireNonNull(properties.getProperty("Schluss"));
+		final String closeAsString = Objects.requireNonNull(properties.getProperty("Schluss"));
 		final String dateAsString = Objects.requireNonNull(properties.getProperty("Datum"));
 		final String isin = Objects.requireNonNull(properties.getProperty("Isin"));
 
@@ -71,10 +71,10 @@ public class FinPriceImportRunner implements Runnable {
 			return;
 		}
 
-		final String preformat = valueAsString.replace(".", "").replace(",", ".");
-		final BigDecimal value = BigDecimal.valueOf(Double.valueOf(preformat));
+		final String preformatClose = closeAsString.replace(".", "").replace(",", ".");
+		final BigDecimal close = BigDecimal.valueOf(Double.valueOf(preformatClose));
 
-		FinPrice build = new FinPrice.Builder().date(date).value(value).isin(isin).build();
+		FinPrice build = new FinPrice.Builder().date(date).close(close).isin(isin).build();
 		finPriceDao.save(build);
 		imported++;
 
