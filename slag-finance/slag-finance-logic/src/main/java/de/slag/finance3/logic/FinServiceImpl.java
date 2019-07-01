@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -226,11 +227,13 @@ public class FinServiceImpl implements FinService {
 
 		EventBus.occure(new CalulationsPreparedEvent("tasks: " + tasks.size()));
 
-		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
 
 		Collections.shuffle(tasks);
 
 		final long start = System.currentTimeMillis();
+		
+		final Collection<Future<Integer>> futures = tasks.stream().map(executor::submit).collect(Collectors.toList());
 
 		tasks.forEach(executor::submit);
 		executor.shutdown();
@@ -240,9 +243,9 @@ public class FinServiceImpl implements FinService {
 			throw new BaseException(e);
 		}
 		
-		for (Callable<Integer> callable : tasks) {
+		for (Future<Integer> future : futures) {
 			try {
-				callable.call();
+				future.get();
 			} catch (Exception e) {
 				throw new BaseException(e);
 			}
@@ -319,8 +322,9 @@ public class FinServiceImpl implements FinService {
 			});
 		});
 
-		ExecutorService exec = Executors.newScheduledThreadPool(1);
+		ExecutorService exec = Executors.newScheduledThreadPool(4);
 		tasks.forEach(exec::submit);
+		Collection<Future<Integer>> futures = tasks.stream().map(exec::submit).collect(Collectors.toList());
 
 		exec.shutdown();
 		try {
@@ -328,9 +332,9 @@ public class FinServiceImpl implements FinService {
 		} catch (InterruptedException e) {
 			throw new BaseException(e);
 		}
-		tasks.forEach(task -> {
+		futures.forEach(task -> {
 			try {
-				task.call();
+				task.get();
 			} catch (Exception e) {
 				systemLogDao.save(new SystemLog(Severity.ERROR, e.getMessage()));
 				throw new BaseException(e);

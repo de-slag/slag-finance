@@ -3,6 +3,7 @@ package de.slag.finance.importer;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
@@ -46,15 +47,19 @@ public class FinPriceImportRunner implements Runnable {
 		start = System.currentTimeMillis();
 		final Collection<Long> allIds = xiDataDao.findAllIds();
 
+		final Collection<Long> importing = new ArrayList<Long>();
+
 		allIds.forEach(t -> {
 			try {
+				importing.add(t);
+				LOG.info("import " + importing.size() + "/" + allIds.size());
 				importData(t);
 			} catch (ParseException e) {
 				throw new BaseException(e);
 			}
 		});
 		end = System.currentTimeMillis();
-		EventBus.occure(new DataImportedEvent("data imported: " + imported + ", took (ms) "+ (end - start)));
+		EventBus.occure(new DataImportedEvent("data imported: " + imported + ", took (ms) " + (end - start)));
 	}
 
 	private void importData(Long xiId) throws ParseException {
