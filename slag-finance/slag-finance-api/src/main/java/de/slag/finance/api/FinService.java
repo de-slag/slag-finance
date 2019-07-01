@@ -16,6 +16,8 @@ public interface FinService {
 	void assertIsinWkn();
 	
 	void calcAllAdministered();
+	
+	void report();
 
 
 }

@@ -53,6 +53,7 @@ import de.slag.finance.model.Kpi;
 import de.slag.finance3.events.CalculationsDoneEvent;
 import de.slag.finance3.events.CalulationsPreparedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
+import de.slag.finance3.report.FinReportService;
 
 @Service
 public class FinServiceImpl implements FinService {
@@ -76,6 +77,9 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private SystemLogDao systemLogDao;
+
+	@Resource
+	private FinReportService finReportService;
 
 	private Collection<FinStageService> stageServices = new ArrayList<>();
 
@@ -327,6 +331,11 @@ public class FinServiceImpl implements FinService {
 			}
 		});
 
+	}
+
+	@Override
+	public void report() {
+		finReportService.reportStatistic();
 	}
 
 }

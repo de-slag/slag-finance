@@ -123,9 +123,11 @@ public class FinXApp {
 			} else if (isControl("IMPORT")) {
 				finService.importData();				
 			} else if (isControl("CALC")) {
-				finService.calcAllAdministered();				
+				finService.calcAllAdministered();
+			} else if (isControl("REPORT")) {
+				finService.report();
 			} else {
-				LOG.info("do nothing");
+				LOG.debug("do nothing");
 			}
 
 			SleepUtils.sleepFor(500);
