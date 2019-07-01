@@ -9,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.slag.common.base.BaseException;
-import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.deprecated.FinDataPoint;
+import de.slag.finance2.deprecated.SmaCalcUtils;
 
 public class SmaCalcUtilsTest {
 

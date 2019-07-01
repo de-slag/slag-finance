@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.slag.finance.logic.FinStockDateUtils;
+import de.slag.finance.deprecated.FinStockDateUtils;
 
 public class FinStockDateUtilsTest {
 

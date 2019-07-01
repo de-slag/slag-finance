@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.apache.commons.csv.CSVRecord;
 
-import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.deprecated.FinDataPoint;
 import de.slag.finance.model.Kpi;
 
 public class CsvToDataPoint implements Function<CSVRecord, FinDataPoint> {
