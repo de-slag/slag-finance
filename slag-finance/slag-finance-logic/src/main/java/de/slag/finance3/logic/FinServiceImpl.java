@@ -191,7 +191,7 @@ public class FinServiceImpl implements FinService {
 		final List<LocalDate> stockDays = allDates.stream().filter(day -> FinStockDateUtils.isStockDay(day))
 				.collect(Collectors.toList());
 
-		final List<Callable<Integer>> tasks = new ArrayList<>();
+		final List<Callable<?>> tasks = new ArrayList<>();
 
 		admKpis.forEach(admKpi -> {
 			LOG.info(admKpi);
@@ -210,18 +210,8 @@ public class FinServiceImpl implements FinService {
 
 			isinWkns.forEach(isinWkn -> {
 				stockDays.forEach(stockDay -> {
-					
-
-					tasks.add(new Callable<Integer>() {
-
-						@Override
-						public Integer call() throws Exception {
-							calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0]));
-							return 0;
-						}
-					});
+					tasks.add(() -> calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0])));
 				});
-
 			});
 		});
 
@@ -232,8 +222,8 @@ public class FinServiceImpl implements FinService {
 		Collections.shuffle(tasks);
 
 		final long start = System.currentTimeMillis();
-		
-		final Collection<Future<Integer>> futures = tasks.stream().map(executor::submit).collect(Collectors.toList());
+
+		final Collection<Future<?>> futures = tasks.stream().map(executor::submit).collect(Collectors.toList());
 
 		tasks.forEach(executor::submit);
 		executor.shutdown();
@@ -242,8 +232,8 @@ public class FinServiceImpl implements FinService {
 		} catch (InterruptedException e) {
 			throw new BaseException(e);
 		}
-		
-		for (Future<Integer> future : futures) {
+
+		for (Future<?> future : futures) {
 			try {
 				future.get();
 			} catch (Exception e) {
@@ -309,22 +299,18 @@ public class FinServiceImpl implements FinService {
 
 	public void stageData() {
 
-		final Collection<Callable<Integer>> tasks = new ArrayList<>();
+		final Collection<Callable<?>> tasks = new ArrayList<>();
 
 		stageServices().forEach(service -> {
-			tasks.add(new Callable<Integer>() {
-
-				@Override
-				public Integer call() throws Exception {
-					service.stage();
-					return 0;
-				}
+			tasks.add(() -> {
+				service.stage();
+				return 0;
 			});
 		});
 
 		ExecutorService exec = Executors.newScheduledThreadPool(4);
 		tasks.forEach(exec::submit);
-		Collection<Future<Integer>> futures = tasks.stream().map(exec::submit).collect(Collectors.toList());
+		Collection<Future<?>> futures = tasks.stream().map(exec::submit).collect(Collectors.toList());
 
 		exec.shutdown();
 		try {
