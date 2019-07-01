@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.slag.common.base.BaseException;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.Kpi;
 
 public class FinDataPointsHolder {
 

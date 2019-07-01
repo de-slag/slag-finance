@@ -20,6 +20,12 @@
 			<artifactId>slag-finance-import</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>de.slag.finance</groupId>
+			<artifactId>slag-finance-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>de.slag.finance</groupId>

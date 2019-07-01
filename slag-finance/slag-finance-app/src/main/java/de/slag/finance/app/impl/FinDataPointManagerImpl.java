@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import de.slag.common.context.SlagContext;
 import de.slag.finance.data.FinDataPointDao;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointDefaultComparator;
+import de.slag.finance.model.Kpi;
 import de.slag.finance2.FinDataPointManager;
 
 //@Service

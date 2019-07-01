@@ -33,16 +33,17 @@ import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.api.AvailableProperties;
-import de.slag.finance.api.DataStagedEvent;
 import de.slag.finance.api.FinAdminSupport;
+import de.slag.finance.api.FinImportService;
+import de.slag.finance.api.FinService;
 import de.slag.finance.api.FinStageService;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.logic.FinStockDateUtils;
 import de.slag.finance.model.AbstractFinDataPoint;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
 import de.slag.finance.model.IsinWkn;
+import de.slag.finance.model.Kpi;
 import de.slag.finance3.events.CalculationsDoneEvent;
 import de.slag.finance3.events.CalulationsPreparedEvent;
 import de.slag.finance3.logic.calc.SmaCalcUtils;
@@ -63,6 +64,9 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private FinSmaDao finSmaDao;
+	
+	@Resource
+	private FinImportService finImportService;
 
 	private Collection<FinStageService> stageServices = new ArrayList<>();
 
@@ -117,10 +121,7 @@ public class FinServiceImpl implements FinService {
 
 	@Override
 	public void importData() {
-		LOG.info("import data...");
-		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
-		finPriceImportRunner.run();
-
+		finImportService.importData();
 	}
 
 	@Override

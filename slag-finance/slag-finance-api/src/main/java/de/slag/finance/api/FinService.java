@@ -1,9 +1,9 @@
-package de.slag.finance3.logic;
+package de.slag.finance.api;
 
 import java.time.LocalDate;
 
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.AbstractFinDataPoint;
+import de.slag.finance.model.Kpi;
 
 public interface FinService {
 	

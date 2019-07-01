@@ -1,9 +1,8 @@
-package de.slag.finance3.logic.importer;
+package de.slag.finance.importer;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -11,18 +10,30 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.utils.CsvUtils;
+import de.slag.finance.FinPriceDao;
+import de.slag.finance.api.FinImportService;
 
 @Service
 public class FinImportServiceImpl implements FinImportService {
 
 	private static final Log LOG = LogFactory.getLog(FinImportServiceImpl.class);
+	
+	@Resource
+	private XiDataDao xiDataDao;
+	
+	@Resource
+	private FinPriceDao finPriceDao;
+
 
 	private final Predicate<? super File> FILTER_FILE_CSV = file -> file.getName()
 			.endsWith(".csv");
@@ -52,5 +63,12 @@ public class FinImportServiceImpl implements FinImportService {
 		collect.forEach(System.out::println);
 		
 		
+	}
+	
+	@Override
+	public void importData() {
+		LOG.info("import data...");
+		final FinPriceImportRunner finPriceImportRunner = new FinPriceImportRunner(finPriceDao, xiDataDao);
+		finPriceImportRunner.run();
 	}
 }

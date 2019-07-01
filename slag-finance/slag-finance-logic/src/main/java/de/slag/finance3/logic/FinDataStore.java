@@ -3,8 +3,8 @@ package de.slag.finance3.logic;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.AbstractFinDataPoint;
+import de.slag.finance.model.Kpi;
 
 public interface FinDataStore {
 

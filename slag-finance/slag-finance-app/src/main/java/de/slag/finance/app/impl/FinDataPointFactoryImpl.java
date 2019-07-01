@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointFactory;
+import de.slag.finance.model.Kpi;
 
 public class FinDataPointFactoryImpl implements FinDataPointFactory {
 

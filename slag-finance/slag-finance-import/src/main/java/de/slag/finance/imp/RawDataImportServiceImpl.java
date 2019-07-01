@@ -21,11 +21,11 @@ import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.DateUtils;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.imp.model.RawDataPoint;
 import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointFactory;
+import de.slag.finance.model.Kpi;
 
 //@Service
 public class RawDataImportServiceImpl implements RawDataImportService {

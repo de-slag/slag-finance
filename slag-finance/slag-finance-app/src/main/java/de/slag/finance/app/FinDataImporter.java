@@ -33,10 +33,10 @@ import de.slag.common.utils.CliOptionsUtils;
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.DateUtils;
 import de.slag.common.utils.FileDirectoryUtils;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.logic.service.FinDataPointService;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPointFactory;
+import de.slag.finance.model.Kpi;
 
 public class FinDataImporter {
 

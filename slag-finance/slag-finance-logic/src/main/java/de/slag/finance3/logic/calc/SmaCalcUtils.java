@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import de.slag.common.base.BaseException;
 import de.slag.common.utils.DateUtils;
 import de.slag.common.utils.MathUtils;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.AbstractFinDataPoint;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
+import de.slag.finance.model.Kpi;
 import de.slag.finance3.logic.FinDataStore;
 import de.slag.finance3.logic.utils.StockDateUtils;
 

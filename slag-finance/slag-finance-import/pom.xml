@@ -20,5 +20,9 @@
 			<artifactId>slag-finance-logic</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-context</artifactId>
+		</dependency>
 	</dependencies>
 </project>

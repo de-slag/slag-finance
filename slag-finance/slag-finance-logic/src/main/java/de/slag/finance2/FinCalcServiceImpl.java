@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import java.util.Collection;
 
 import de.slag.common.context.SlagContext;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.Kpi;
 import de.slag.finance2.calc.sma.SmaCalcUtils;
 
 public class FinCalcServiceImpl implements FinCalcService {

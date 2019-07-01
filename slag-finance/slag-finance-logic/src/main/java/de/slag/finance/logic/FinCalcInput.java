@@ -2,7 +2,7 @@ package de.slag.finance.logic;
 
 import java.time.LocalDate;
 
-import de.slag.finance.data.model.Kpi;
+import de.slag.finance.model.Kpi;
 
 public interface FinCalcInput {
 	

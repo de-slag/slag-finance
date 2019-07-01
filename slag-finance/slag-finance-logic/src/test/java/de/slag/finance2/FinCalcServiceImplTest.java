@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import de.slag.finance.data.model.Kpi;
+import de.slag.finance.model.Kpi;
 
 @ExtendWith(MockitoExtension.class)
 class FinCalcServiceImplTest {

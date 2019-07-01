@@ -1,4 +1,4 @@
-package de.slag.finance.data.model;
+package de.slag.finance.model;
 
 public enum Kpi {
 	

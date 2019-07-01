@@ -1,4 +1,4 @@
-package de.slag.finance3.logic.importer;
+package de.slag.finance.importer;
 
 import java.util.Comparator;
 

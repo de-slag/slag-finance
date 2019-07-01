@@ -1,4 +1,4 @@
-package de.slag.finance3.logic;
+package de.slag.finance.importer;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

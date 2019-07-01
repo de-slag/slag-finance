@@ -17,8 +17,8 @@ import org.apache.logging.log4j.util.Strings;
 
 import de.slag.common.model.EntityBean;
 import de.slag.common.utils.DateUtils;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.Kpi;
 
 //@Entity
 @Table(name = "FIN_DATA_POINT")

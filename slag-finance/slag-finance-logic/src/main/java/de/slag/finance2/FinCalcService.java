@@ -3,7 +3,7 @@ package de.slag.finance2;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import de.slag.finance.data.model.Kpi;
+import de.slag.finance.model.Kpi;
 
 public interface FinCalcService {
 	

@@ -3,10 +3,10 @@ package de.slag.finance.app.impl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
 import de.slag.finance.model.FinDataPoint.Builder;
 import de.slag.finance.model.FinDataPointBuilder;
+import de.slag.finance.model.Kpi;
 
 public class FinPersistDataPointBuilder implements FinDataPointBuilder {
 

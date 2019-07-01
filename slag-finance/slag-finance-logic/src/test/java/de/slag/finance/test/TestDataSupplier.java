@@ -11,8 +11,8 @@ import org.apache.commons.csv.CSVRecord;
 
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.ResourceUtils;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.model.FinDataPoint;
+import de.slag.finance.model.Kpi;
 
 public class TestDataSupplier implements Supplier<Collection<FinDataPoint>> {
 

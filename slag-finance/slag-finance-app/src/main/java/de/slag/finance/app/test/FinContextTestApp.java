@@ -13,7 +13,7 @@ import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
 import de.slag.common.model.beans.SystemLogDao;
 import de.slag.finance.api.FinAdminSupport;
-import de.slag.finance3.logic.FinService;
+import de.slag.finance.api.FinService;
 
 public class FinContextTestApp {
 

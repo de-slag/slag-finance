@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.slag.finance.data.model.Kpi;
-
 class FinDataPointBuilderTest {
 
 	private static final int[] PARAMETERS = new int[0];

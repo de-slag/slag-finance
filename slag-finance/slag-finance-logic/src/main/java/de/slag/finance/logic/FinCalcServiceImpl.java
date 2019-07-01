@@ -3,8 +3,8 @@ package de.slag.finance.logic;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
-import de.slag.finance.data.model.Kpi;
 import de.slag.finance.logic.service.FinDataPointService;
+import de.slag.finance.model.Kpi;
 
 @Service
 public class FinCalcServiceImpl implements FinCalcService {
