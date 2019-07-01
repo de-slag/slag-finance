@@ -14,6 +14,7 @@ import de.slag.finance.IsinWknDao;
 import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance.api.FinStageService;
+import de.slag.finance.api.StagingException;
 
 @Service
 public class FinOvStageServiceImpl implements FinStageService {
@@ -27,9 +28,17 @@ public class FinOvStageServiceImpl implements FinStageService {
 	@Resource
 	private SystemLogDao systemLogDao;
 
-	public void stage() {
+	public void stage() throws StagingException {
 		systemLogDao.save(new SystemLog(this.getClass().getName() + " start staging..."));
-		final Path path = Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
+		// final Path path =
+		// Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
+		String workdir = FinAdminSupport.getSafe(AvailableProperties.WORKDIR);
+		String stageDir = workdir + "/staging";
+		final Path path = Paths.get(stageDir);
+		if (!path.toFile().exists()) {
+			throw new StagingException(String.format("stage directory not exists: '%s'", stageDir));
+		}
+
 		FinRawDataStageRunner finRawDataStageRunner = new FinRawDataStageRunner(path, xiDataDao, isinWknDao);
 		finRawDataStageRunner.run();
 

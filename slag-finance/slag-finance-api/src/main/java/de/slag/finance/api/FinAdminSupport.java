@@ -25,7 +25,15 @@ public final class FinAdminSupport {
 		keySet.stream().filter(key -> key instanceof String).map(key -> (String) key)
 				.filter(key -> key.startsWith(FIN_PREFIX))
 				.forEach(key -> MAP.put(key, configProperties.getProperty(key)));
+
+		assertProperty(AvailableProperties.WORKDIR);
+
 	}
+	
+	static private void assertProperty(String key) {
+		Objects.requireNonNull(MAP.get(key), String.format("'%s' not administrated", key));
+	}
+	
 
 	public static Map<String, String> getAll() {
 		final HashMap<String, String> hashMap = new HashMap<>();
@@ -51,5 +59,9 @@ public final class FinAdminSupport {
 			return Optional.empty();
 		}
 		return Optional.of(MAP.get(key));
+	}
+
+	public @interface MandatoryProperty {
+
 	}
 }

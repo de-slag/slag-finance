@@ -10,7 +10,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -25,9 +28,11 @@ import org.springframework.stereotype.Service;
 import de.slag.common.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
-import de.slag.common.base.SlagScheduledThreadPoolExecutorSupplier;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
+import de.slag.common.model.beans.SystemLog;
+import de.slag.common.model.beans.SystemLog.Severity;
+import de.slag.common.model.beans.SystemLogDao;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
@@ -64,16 +69,18 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private FinSmaDao finSmaDao;
-	
+
 	@Resource
 	private FinImportService finImportService;
+
+	@Resource
+	private SystemLogDao systemLogDao;
 
 	private Collection<FinStageService> stageServices = new ArrayList<>();
 
 	@PostConstruct
 	public void setUp() {
 		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_START_DATE);
-		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_MAX_PARAMETER);
 	}
 
 	private Collection<FinStageService> stageServices() {
@@ -183,7 +190,7 @@ public class FinServiceImpl implements FinService {
 		final List<LocalDate> stockDays = allDates.stream().filter(day -> FinStockDateUtils.isStockDay(day))
 				.collect(Collectors.toList());
 
-		final List<Runnable> tasks = new ArrayList<>();
+		final List<Callable<Integer>> tasks = new ArrayList<>();
 
 		admKpis.forEach(admKpi -> {
 			LOG.info(admKpi);
@@ -202,15 +209,16 @@ public class FinServiceImpl implements FinService {
 
 			isinWkns.forEach(isinWkn -> {
 				stockDays.forEach(stockDay -> {
+					
 
-					final Runnable runner = new Runnable() {
+					tasks.add(new Callable<Integer>() {
 
 						@Override
-						public void run() {
+						public Integer call() throws Exception {
 							calc(isinWkn.getIsin(), stockDay, kpi, parameters.toArray(new Integer[0]));
+							return 0;
 						}
-					};
-					tasks.add(runner);
+					});
 				});
 
 			});
@@ -218,19 +226,26 @@ public class FinServiceImpl implements FinService {
 
 		EventBus.occure(new CalulationsPreparedEvent("tasks: " + tasks.size()));
 
-		final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new SlagScheduledThreadPoolExecutorSupplier()
-				.get();
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
 		Collections.shuffle(tasks);
 
 		final long start = System.currentTimeMillis();
 
-		tasks.forEach(scheduledThreadPoolExecutor::execute);
-		scheduledThreadPoolExecutor.shutdown();
+		tasks.forEach(executor::submit);
+		executor.shutdown();
 		try {
-			scheduledThreadPoolExecutor.awaitTermination(1, TimeUnit.DAYS);
+			executor.awaitTermination(1, TimeUnit.DAYS);
 		} catch (InterruptedException e) {
 			throw new BaseException(e);
+		}
+		
+		for (Callable<Integer> callable : tasks) {
+			try {
+				callable.call();
+			} catch (Exception e) {
+				throw new BaseException(e);
+			}
 		}
 
 		EventBus.occure(new CalculationsDoneEvent(
@@ -290,24 +305,38 @@ public class FinServiceImpl implements FinService {
 	}
 
 	public void stageData() {
-		final Collection<Runnable> tasks = new ArrayList<>();
+
+		final Collection<Callable<Integer>> tasks = new ArrayList<>();
+
 		stageServices().forEach(service -> {
-			tasks.add(new Runnable() {
+			tasks.add(new Callable<Integer>() {
 
 				@Override
-				public void run() {
+				public Integer call() throws Exception {
 					service.stage();
+					return 0;
 				}
 			});
 		});
-		final ScheduledThreadPoolExecutor executor = new SlagScheduledThreadPoolExecutorSupplier().get();
-		tasks.forEach(executor::execute);
-		executor.shutdown();
 
+		ExecutorService exec = Executors.newScheduledThreadPool(1);
+		tasks.forEach(exec::submit);
+
+		exec.shutdown();
 		try {
-			executor.awaitTermination(1, TimeUnit.HOURS);
+			exec.awaitTermination(1, TimeUnit.MINUTES);
 		} catch (InterruptedException e) {
 			throw new BaseException(e);
 		}
+		tasks.forEach(task -> {
+			try {
+				task.call();
+			} catch (Exception e) {
+				systemLogDao.save(new SystemLog(Severity.ERROR, e.getMessage()));
+				throw new BaseException(e);
+			}
+		});
+
 	}
+
 }

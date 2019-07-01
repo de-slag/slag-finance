@@ -1,7 +1,10 @@
 package de.slag.finance.api;
 
-public interface AvailableProperties {
+import de.slag.finance.api.FinAdminSupport.MandatoryProperty;
 
+public interface AvailableProperties {
+	
+	@Deprecated
 	String IMPORT_DIR = "finance.import.dir";
 	
 	@Deprecated
@@ -13,7 +16,11 @@ public interface AvailableProperties {
 	
 	String ALLOVER_START_DATE = "finance.allover.start.date";
 	
+	@Deprecated
 	String ALLOVER_MAX_PARAMETER = "finance.allover.max.parameter";
+	
+	@MandatoryProperty
+	String WORKDIR = "finance.workdir";
 
 
 }
