@@ -1,9 +1,7 @@
 package de.slag.finance.model;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.lang.model.util.Elements.Origin;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,7 +12,6 @@ import javax.persistence.TemporalType;
 import de.slag.common.model.EntityBean;
 
 @MappedSuperclass
-
 public abstract class AbstractFinDataPoint extends EntityBean {
 
 	@Column
