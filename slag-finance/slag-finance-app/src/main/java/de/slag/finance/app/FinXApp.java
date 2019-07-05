@@ -3,8 +3,11 @@ package de.slag.finance.app;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
@@ -17,7 +20,9 @@ import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
 import de.slag.common.db.hibernate.HibernateResource;
 import de.slag.common.logging.LoggingUtils;
-import de.slag.common.model.beans.SystemLogDao;
+import de.slag.common.model.beans.SysLog;
+import de.slag.common.model.beans.SysLog.Severity;
+import de.slag.common.model.dao.SysLogDao;
 import de.slag.common.utils.SleepUtils;
 import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.FinAdminSupport;
@@ -33,7 +38,7 @@ public class FinXApp {
 
 	private StringBuffer eventLogger;
 
-	private SystemLogDao systemLogDao;
+	private SysLogDao systemLogDao;
 
 	private File controlDir;
 
@@ -86,7 +91,7 @@ public class FinXApp {
 		// FIXME hacky
 		// ((FinServiceImpl)finService).init();
 
-		systemLogDao = SlagContext.getBean(SystemLogDao.class);
+		systemLogDao = SlagContext.getBean(SysLogDao.class);
 
 		LOG.info("set up...done.");
 
@@ -114,42 +119,58 @@ public class FinXApp {
 	public void run() {
 		finService.assertIsinWkn();
 
+
 		while (true) {
+			
+			long startCycle = System.currentTimeMillis();
+			
+			if (isControl("STAGE")) {
+				finService.stageData();
+
+			} else if (isControl("IMPORT")) {
+				finService.importData();
+
+			} else if (isControl("CALC")) {
+				finService.calcAllAdministered();
+
+			} else if (isControl("REPORT")) {
+				finService.report();
+
+			}
+
+			final Collection<SysLog> newLogs = systemLogDao.findAll().stream()
+					.filter(e -> e.getCreatedAt().getTime() > startCycle).collect(Collectors.toList());
+
+			newLogs.stream().filter(e -> e.getSeverity() == Severity.INFO).forEach(e -> LOG.info(e));
+
+			newLogs.stream().filter(e -> e.getSeverity() == Severity.WARN).forEach(e -> LOG.warn(e));
+
+			newLogs.stream().filter(e -> e.getSeverity() == Severity.ERROR).forEach(e -> LOG.error(e));
+
 			if (isControl("STOP")) {
 				LOG.info("stop program");
 				break;
-			} else if (isControl("STAGE")) {
-				finService.stageData();
-			} else if (isControl("IMPORT")) {
-				finService.importData();				
-			} else if (isControl("CALC")) {
-				finService.calcAllAdministered();
-			} else if (isControl("REPORT")) {
-				finService.report();
-			} else {
-				LOG.debug("do nothing");
 			}
 
 			SleepUtils.sleepFor(500);
 		}
 
-
 	}
 
 	private boolean isControl(String controlString) {
 		File[] listFiles = controlDir.listFiles();
-		
+
 		Stream<File> stream = Arrays.stream(listFiles);
 		Predicate<? super File> predicate = file -> controlString.equals(file.getName());
-		
+
 		Optional<File> findAny = stream.filter(predicate).findAny();
-		if(!findAny.isPresent()) {
+		if (!findAny.isPresent()) {
 			return false;
 		}
 		final File file = findAny.get();
-		
+
 		file.delete();
-		
+
 		return true;
 	}
 
