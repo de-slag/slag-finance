@@ -8,8 +8,9 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.XiDataDao;
-import de.slag.common.model.beans.SystemLog;
-import de.slag.common.model.beans.SystemLogDao;
+import de.slag.common.model.beans.SysLog;
+import de.slag.common.model.beans.SysLog.Severity;
+import de.slag.common.model.service.SysLogService;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.FinAdminSupport;
@@ -26,10 +27,10 @@ public class FinOvStageServiceImpl implements FinStageService {
 	private IsinWknDao isinWknDao;
 
 	@Resource
-	private SystemLogDao systemLogDao;
+	private SysLogService sysLogService;
 
 	public void stage() throws StagingException {
-		systemLogDao.save(new SystemLog(this.getClass().getName() + " start staging..."));
+		sysLogService.log(Severity.INFO, this.getClass().getName() + " start staging...");
 		// final Path path =
 		// Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
 		String workdir = FinAdminSupport.getSafe(AvailableProperties.WORKDIR);
@@ -42,6 +43,6 @@ public class FinOvStageServiceImpl implements FinStageService {
 		FinRawDataStageRunner finRawDataStageRunner = new FinRawDataStageRunner(path, xiDataDao, isinWknDao);
 		finRawDataStageRunner.run();
 
-		systemLogDao.save(new SystemLog(this.getClass().getName() + " staging done."));
+		sysLogService.log(Severity.INFO, this.getClass().getName() + " staging done.");
 	}
 }
