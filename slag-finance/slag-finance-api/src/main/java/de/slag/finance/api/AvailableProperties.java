@@ -21,6 +21,10 @@ public interface AvailableProperties {
 	
 	@MandatoryProperty
 	String WORKDIR = "finance.workdir";
+	
+	String FINANCE_INTERFACE_AV_KEY = "finance.interface.av.key";
+	
+	String FINANCE_INTERFACE_AV_URL = "finance.interface.av.url";
 
 
 }
