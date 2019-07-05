@@ -3,15 +3,15 @@ package de.slag.finance.app.data;
 import org.springframework.stereotype.Repository;
 
 import de.slag.common.db.AbstractDao;
-import de.slag.common.model.beans.SystemLog;
-import de.slag.common.model.beans.SystemLogDao;
+import de.slag.common.model.beans.SysLog;
+import de.slag.common.model.dao.SysLogDao;
 
 @Repository
-public class SystemLogDaoImpl extends AbstractDao<SystemLog> implements SystemLogDao {
+public class SysLogDaoImpl extends AbstractDao<SysLog> implements SysLogDao {
 
 	@Override
-	protected Class<SystemLog> getPersistentType() {
-		return SystemLog.class;
+	protected Class<SysLog> getPersistentType() {
+		return SysLog.class;
 	}
 
 }

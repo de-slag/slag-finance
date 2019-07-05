@@ -31,9 +31,9 @@ import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
-import de.slag.common.model.beans.SystemLog;
-import de.slag.common.model.beans.SystemLog.Severity;
-import de.slag.common.model.beans.SystemLogDao;
+import de.slag.common.model.beans.SysLog;
+import de.slag.common.model.beans.SysLog.Severity;
+import de.slag.common.model.service.SysLogService;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
@@ -76,7 +76,7 @@ public class FinServiceImpl implements FinService {
 	private FinImportService finImportService;
 
 	@Resource
-	private SystemLogDao systemLogDao;
+	private SysLogService sysLogService;
 
 	@Resource
 	private FinReportService finReportService;
@@ -313,7 +313,6 @@ public class FinServiceImpl implements FinService {
 		});
 
 		ExecutorService exec = Executors.newScheduledThreadPool(4);
-		tasks.forEach(exec::submit);
 		Collection<Future<?>> futures = tasks.stream().map(exec::submit).collect(Collectors.toList());
 
 		exec.shutdown();
@@ -326,7 +325,7 @@ public class FinServiceImpl implements FinService {
 			try {
 				task.get();
 			} catch (Exception e) {
-				systemLogDao.save(new SystemLog(Severity.ERROR, e.getMessage()));
+				sysLogService.log(Severity.ERROR, e.getMessage());
 				throw new BaseException(e);
 			}
 		});
