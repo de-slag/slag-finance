@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import de.slag.common.Dao;
 import de.slag.common.model.beans.SysLog;
 import de.slag.common.model.beans.SysLog.Severity;
 import de.slag.common.model.beans.SysLogEntry;
@@ -31,6 +32,11 @@ public class SysLogServiceImpl implements SysLogService {
 	@Override
 	public Collection<SysLogEntry> findBy(Predicate<SysLogEntry> filter) {
 		return sysLogDao.findAll().stream().filter(filter).collect(Collectors.toList());
+	}
+
+	@Override
+	public Dao<SysLog> getDao() {
+		return sysLogDao;
 	}
 
 }
