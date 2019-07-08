@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import de.slag.common.model.EntityBean;
 
 @Entity
-public class IsinWkn extends EntityBean {
+public class StockTitle extends EntityBean {
 
 	private String isin;
 	
@@ -48,8 +48,8 @@ public class IsinWkn extends EntityBean {
 			return this;
 		}
 		
-		public IsinWkn build() {
-			final IsinWkn builded = new IsinWkn();
+		public StockTitle build() {
+			final StockTitle builded = new StockTitle();
 			builded.setIsin(Objects.requireNonNull(isin));
 			builded.setWkn(Objects.requireNonNull(wkn));
 			return builded;

@@ -37,7 +37,7 @@ import de.slag.common.model.service.SysLogService;
 import de.slag.common.utils.DateUtils;
 import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
-import de.slag.finance.IsinWknDao;
+import de.slag.finance.StockTitleDao;
 import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance.api.FinImportService;
@@ -48,7 +48,7 @@ import de.slag.finance.deprecated.FinStockDateUtils;
 import de.slag.finance.model.AbstractFinDataPoint;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance.model.FinSma;
-import de.slag.finance.model.IsinWkn;
+import de.slag.finance.model.StockTitle;
 import de.slag.finance.model.Kpi;
 import de.slag.finance3.events.CalculationsDoneEvent;
 import de.slag.finance3.events.CalulationsPreparedEvent;
@@ -61,7 +61,7 @@ public class FinServiceImpl implements FinService {
 	private static final Log LOG = LogFactory.getLog(FinServiceImpl.class);
 
 	@Resource
-	private IsinWknDao isinWknDao;
+	private StockTitleDao stockTitleDao;
 
 	@Resource
 	private FinPriceDao finPriceDao;
@@ -144,7 +144,7 @@ public class FinServiceImpl implements FinService {
 
 		final List<String> wknIsins = Arrays.asList(wknIsinsProperty.split(";"));
 
-		final Collection<IsinWkn> isinWkns = new ArrayList<IsinWkn>();
+		final Collection<StockTitle> isinWkns = new ArrayList<StockTitle>();
 		wknIsins.forEach(wknIsin -> {
 			final String[] split = wknIsin.split(":");
 			if (split.length != 2) {
@@ -153,22 +153,22 @@ public class FinServiceImpl implements FinService {
 			final String wkn = split[0];
 			final String isin = split[1];
 
-			IsinWkn isinWkn = new IsinWkn.Builder().wkn(wkn).isin(isin).build();
+			StockTitle isinWkn = new StockTitle.Builder().wkn(wkn).isin(isin).build();
 			LOG.info(String.format("add '%s'", isinWkn));
 			isinWkns.add(isinWkn);
 		});
 
-		final List<String> existingIsins = isinWknDao.findAllIds().stream().map(id -> isinWknDao.loadById(id))
+		final List<String> existingIsins = stockTitleDao.findAllIds().stream().map(id -> stockTitleDao.loadById(id))
 				.filter(isinWkn -> isinWkn.isPresent()).map(isinWkn -> isinWkn.get()).map(isinWkn -> isinWkn.getIsin())
 				.collect(Collectors.toList());
 
-		final List<IsinWkn> isinWknToSave = isinWkns.stream().filter(g -> !existingIsins.contains(g.getIsin()))
+		final List<StockTitle> isinWknToSave = isinWkns.stream().filter(g -> !existingIsins.contains(g.getIsin()))
 				.collect(Collectors.toList());
 
 		LOG.info(String.format("isin-wkns to save: '%s'", isinWknToSave));
-		isinWknToSave.forEach(isinWkn -> isinWknDao.save(isinWkn));
+		isinWknToSave.forEach(isinWkn -> stockTitleDao.save(isinWkn));
 
-		LOG.info(isinWknDao.findAllIds());
+		LOG.info(stockTitleDao.findAllIds());
 	}
 
 	@Override
@@ -207,9 +207,9 @@ public class FinServiceImpl implements FinService {
 			}
 			LOG.info(String.format("kpi: '%s' %s", kpi, parameters));
 
-			final Collection<Long> allIds = isinWknDao.findAllIds();
+			final Collection<Long> allIds = stockTitleDao.findAllIds();
 
-			final List<IsinWkn> isinWkns = allIds.stream().map(id -> isinWknDao.loadById(id)).map(v -> v.get())
+			final List<StockTitle> isinWkns = allIds.stream().map(id -> stockTitleDao.loadById(id)).map(v -> v.get())
 					.collect(Collectors.toList());
 
 			isinWkns.forEach(isinWkn -> {

@@ -18,10 +18,10 @@ import de.slag.common.base.BaseException;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.model.XiData;
 import de.slag.common.utils.CsvUtils;
-import de.slag.finance.IsinWknDao;
+import de.slag.finance.StockTitleDao;
 import de.slag.finance.api.Constants;
 import de.slag.finance.api.DataStagedEvent;
-import de.slag.finance.model.IsinWkn;
+import de.slag.finance.model.StockTitle;
 
 public class FinRawDataStageRunner implements Runnable {
 
@@ -33,15 +33,15 @@ public class FinRawDataStageRunner implements Runnable {
 
 	private final XiDataDao xiDataDao;
 
-	private final IsinWknDao isinWknDao;
+	private final StockTitleDao stockTitleDao;
 
 	private int count;
 
-	public FinRawDataStageRunner(Path basePath, XiDataDao xiDataDao, IsinWknDao isinWknDao) {
+	public FinRawDataStageRunner(Path basePath, XiDataDao xiDataDao, StockTitleDao stockTitleDao) {
 		super();
 		this.basePath = basePath;
 		this.xiDataDao = xiDataDao;
-		this.isinWknDao = isinWknDao;
+		this.stockTitleDao = stockTitleDao;
 	}
 
 	@Override
@@ -79,12 +79,12 @@ public class FinRawDataStageRunner implements Runnable {
 	}
 
 	private Collection<Path> determineStageDirectories() {
-		final Collection<IsinWkn> allIsinWkns = isinWknDao.findAll();
+		final Collection<StockTitle> allStockTitles = stockTitleDao.findAll();
 
 		final String absolutePath = basePath.toFile().getAbsolutePath();
 		final String normalizedPathString = normalizedPathString(absolutePath);
 
-		return allIsinWkns.stream().map(isinWkn -> isinWkn.getIsin()).map(isin -> normalizedPathString + "/" + isin)
+		return allStockTitles.stream().map(stockTitle -> stockTitle.getIsin()).map(stockTitle -> normalizedPathString + "/" + stockTitle)
 				.map(absolutePathString -> new File(absolutePathString)).filter(file -> file.exists())
 				.filter(file -> file.isDirectory()).map(file -> file.toPath()).collect(Collectors.toList());
 	}

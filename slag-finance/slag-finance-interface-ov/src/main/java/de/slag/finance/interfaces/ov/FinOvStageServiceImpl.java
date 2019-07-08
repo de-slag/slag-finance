@@ -11,7 +11,7 @@ import de.slag.common.XiDataDao;
 import de.slag.common.base.AdmService;
 import de.slag.common.model.beans.SysLog.Severity;
 import de.slag.common.model.service.SysLogService;
-import de.slag.finance.IsinWknDao;
+import de.slag.finance.StockTitleDao;
 import de.slag.finance.api.AvailableProperties;
 import de.slag.finance.api.Constants;
 import de.slag.finance.api.FinAdminSupport;
@@ -25,7 +25,7 @@ public class FinOvStageServiceImpl implements FinStageService {
 	private XiDataDao xiDataDao;
 
 	@Resource
-	private IsinWknDao isinWknDao;
+	private StockTitleDao stockTitleDao;
 
 	@Resource
 	private SysLogService sysLogService;
@@ -53,7 +53,7 @@ public class FinOvStageServiceImpl implements FinStageService {
 			throw new StagingException(String.format("stage directory not exists: '%s'", stageDir));
 		}
 
-		FinRawDataStageRunner finRawDataStageRunner = new FinRawDataStageRunner(path, xiDataDao, isinWknDao);
+		FinRawDataStageRunner finRawDataStageRunner = new FinRawDataStageRunner(path, xiDataDao, stockTitleDao);
 		finRawDataStageRunner.run();
 
 		sysLogService.log(Severity.INFO, this.getClass().getName() + " staging done.");
