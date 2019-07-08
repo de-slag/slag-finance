@@ -8,11 +8,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.XiDataDao;
-import de.slag.common.model.beans.SysLog;
+import de.slag.common.base.AdmService;
 import de.slag.common.model.beans.SysLog.Severity;
 import de.slag.common.model.service.SysLogService;
 import de.slag.finance.IsinWknDao;
 import de.slag.finance.api.AvailableProperties;
+import de.slag.finance.api.Constants;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance.api.FinStageService;
 import de.slag.finance.api.StagingException;
@@ -28,13 +29,25 @@ public class FinOvStageServiceImpl implements FinStageService {
 
 	@Resource
 	private SysLogService sysLogService;
+	
+	@Resource
+	private AdmService admService;
 
 	public void stage() throws StagingException {
 		sysLogService.log(Severity.INFO, this.getClass().getName() + " start staging...");
-		// final Path path =
-		// Paths.get(FinAdminSupport.getSafe(AvailableProperties.IMPORT_DIR));
 		String workdir = FinAdminSupport.getSafe(AvailableProperties.WORKDIR);
-		String stageDir = workdir + "/staging";
+		String stageDir = workdir + "/" + Constants.SUB_WORKDIR_STAGING;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		final Path path = Paths.get(stageDir);
 		if (!path.toFile().exists()) {
 			throw new StagingException(String.format("stage directory not exists: '%s'", stageDir));
