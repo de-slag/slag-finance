@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.XiDataDao;
+import de.slag.common.base.AdmService;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
 import de.slag.common.base.event.EventBus;
@@ -80,6 +81,9 @@ public class FinServiceImpl implements FinService {
 
 	@Resource
 	private FinReportService finReportService;
+
+	@Resource
+	private AdmService admService;
 
 	private Collection<FinStageService> stageServices = new ArrayList<>();
 
@@ -169,6 +173,23 @@ public class FinServiceImpl implements FinService {
 		isinWknToSave.forEach(isinWkn -> stockTitleDao.save(isinWkn));
 
 		LOG.info(stockTitleDao.findAllIds());
+
+		// notation
+
+		final String safe = admService.getSafe(AvailableProperties.FINANCE_DATA_ISIN_NOTATIONS);
+		final String[] split = safe.split(";");
+		Arrays.stream(split).forEach(isinNotation -> {
+			final String[] split2 = isinNotation.split(":");
+			final String isin = split2[0];
+			final Optional<StockTitle> findBy = stockTitleDao.findBy(isin);
+			if(!findBy.isPresent()) {
+				return;
+			}
+			final StockTitle stockTitle = findBy.get();
+			stockTitle.setNotation(split2[1]);
+			stockTitleDao.save(stockTitle);
+		});
+
 	}
 
 	@Override
