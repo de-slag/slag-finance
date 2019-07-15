@@ -63,7 +63,7 @@ public class FinXApp {
 	}
 
 	public void setUp() {
-		LOG.info("set up...");
+		LOG.info("start set up");
 
 		String workdir = FinAdminSupport.getSafe(AvailableProperties.WORKDIR);
 		String controlDirName = workdir + "/control";
@@ -75,6 +75,7 @@ public class FinXApp {
 			throw new BaseException("control dir is not a directory: " + controlDirName);
 		}
 		this.controlDir = file;
+		LOG.info(String.format("control dir is: '%s'", controlDirName));
 
 		hibernateResource = SlagContext.getBean(HibernateResource.class);
 		if (!hibernateResource.isValid()) {
@@ -93,7 +94,6 @@ public class FinXApp {
 
 		systemLogDao = SlagContext.getBean(SysLogDao.class);
 
-		LOG.info("set up...done.");
 
 		eventLogger = new StringBuffer();
 
@@ -105,6 +105,7 @@ public class FinXApp {
 
 			}
 		});
+		LOG.info("set up...done.");
 	}
 
 	public void test() {
