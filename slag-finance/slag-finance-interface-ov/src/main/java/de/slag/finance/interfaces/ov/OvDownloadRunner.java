@@ -7,12 +7,12 @@ import java.util.concurrent.Callable;
 import org.apache.commons.io.FileUtils;
 
 public class OvDownloadRunner implements Callable<Long> {
-
-	private String url;
+	
+	private URL url;
 	
 	private File targetFile;
-
-	public OvDownloadRunner(String url, File targetFile) {
+	
+	public OvDownloadRunner(URL url, File targetFile) {
 		this.url = url;
 		this.targetFile = targetFile;
 	}
@@ -20,7 +20,7 @@ public class OvDownloadRunner implements Callable<Long> {
 	@Override
 	public Long call() throws Exception {
 		final long start = System.currentTimeMillis();
-		FileUtils.copyURLToFile(new URL(url), targetFile);
+		FileUtils.copyURLToFile(url, targetFile);
 		return System.currentTimeMillis() - start;
 	}
 }

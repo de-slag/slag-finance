@@ -2,6 +2,7 @@ package de.slag.finance.interfaces.ov;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +20,7 @@ class OvDownloadRunnerTest {
 	@BeforeEach
 	public void setUp() throws IOException {
 		file = Files.createTempFile("test", ".csv").toFile();
-		runner = new OvDownloadRunner(url, file);
+		runner = new OvDownloadRunner(new URL(url), file);
 	}
 
 	@Test

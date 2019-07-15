@@ -5,6 +5,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.slag.common.base.BaseException;
 import de.slag.common.utils.DateUtils;
 
 class OvUrlBuilder {
@@ -34,7 +35,7 @@ class OvUrlBuilder {
 	
 	
 	
-	URL build() throws MalformedURLException {
+	URL build() {
 
 		Date startDate = DateUtils.toDate(DateUtils.toLocalDate(date).minusYears(1));
 		
@@ -55,7 +56,11 @@ class OvUrlBuilder {
 		
 		
 		
-		return new URL(sb.toString());
+		try {
+			return new URL(sb.toString());
+		} catch (MalformedURLException e) {
+			throw new BaseException(e);
+		}
 	}
 
 }
