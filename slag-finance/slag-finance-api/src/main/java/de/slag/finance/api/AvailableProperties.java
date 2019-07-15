@@ -25,6 +25,10 @@ public interface AvailableProperties {
 	String FINANCE_INTERFACE_AV_KEY = "finance.interface.av.key";
 	
 	String FINANCE_INTERFACE_AV_URL = "finance.interface.av.url";
+	
+	String FINANCE_INTERFACE_OV_URL = "finance.interface.ov.url";
+	
+	String FINANCE_DATA_ISIN_NOTATIONS = "finance.data.isin.notations";
 
 
 }
