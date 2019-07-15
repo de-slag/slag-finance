@@ -12,6 +12,8 @@ public class StockTitle extends EntityBean {
 	private String isin;
 	
 	private String wkn;
+	
+	private String notation;
 
 	public String getIsin() {
 		return isin;
@@ -55,6 +57,14 @@ public class StockTitle extends EntityBean {
 			return builded;
 		}
 		
+	}
+
+	public String getNotation() {
+		return notation;
+	}
+
+	public void setNotation(String notation) {
+		this.notation = notation;
 	}
 
 	
