@@ -6,15 +6,16 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import de.slag.common.base.BaseException;
 
 public class FinCtrlApp {
 
-	static ActionListener al;
 
 	public static void main(String[] args) {
+		ActionListener al;
 		JFrame f = new JFrame();// creating instance of JFrame
 
 		JButton bStage = new JButton("STAGE");
@@ -67,6 +68,7 @@ public class FinCtrlApp {
 				try {
 					new File(s).createNewFile();
 				} catch (IOException ex) {
+					JOptionPane.showMessageDialog(null, "exception, message: " + ex.getMessage());
 					throw new BaseException(ex);
 				}
 
