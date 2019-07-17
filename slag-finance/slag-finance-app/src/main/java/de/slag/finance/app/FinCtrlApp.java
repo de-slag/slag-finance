@@ -1,4 +1,5 @@
 package de.slag.finance.app;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -9,10 +10,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.slag.common.base.BaseException;
+import de.slag.common.base.SlagProperties;
+import de.slag.finance.api.AvailableProperties;
 
 public class FinCtrlApp {
-
 
 	public static void main(String[] args) {
 		ActionListener al;
@@ -52,7 +56,12 @@ public class FinCtrlApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String s = textField.getText() + "/";
+				String text = textField.getText();
+				if (StringUtils.isBlank(text)) {
+					JOptionPane.showMessageDialog(null, "path not setted");
+					return;
+				}
+				String s = text + "/";
 				final Object source = e.getSource();
 				if (source == bStage) {
 					s += "STAGE";
