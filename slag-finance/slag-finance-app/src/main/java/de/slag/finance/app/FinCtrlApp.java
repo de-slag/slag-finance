@@ -26,6 +26,7 @@ public class FinCtrlApp {
 		JButton bImport = new JButton("IMPORT");
 		JButton bCalc = new JButton("CALC");
 		JButton bStop = new JButton("STOP");
+		JButton bReport = new JButton("REPORT");
 		JTextField textField = new JTextField();
 
 		final int buttonHeight = 40;
@@ -36,16 +37,18 @@ public class FinCtrlApp {
 		bStage.setBounds(abstand, abstand, buttonWidth, buttonHeight);
 		bImport.setBounds(abstand * 2 + buttonWidth, abstand, buttonWidth, buttonHeight);
 		bCalc.setBounds(abstand * 3 + buttonWidth * 2, abstand, buttonWidth, buttonHeight);
-		bStop.setBounds(abstand * 4 + buttonWidth * 3, abstand, buttonWidth, buttonHeight);
-		textField.setBounds(abstand, abstand * 2 + buttonHeight, buttonWidth * 4, 25);
+		bReport.setBounds(abstand * 4 + buttonWidth * 3, abstand, buttonWidth, buttonHeight);
+		bStop.setBounds(abstand * 5 + buttonWidth * 4, abstand, buttonWidth, buttonHeight);
+		textField.setBounds(abstand, abstand * 2 + buttonHeight, buttonWidth * 5, 25);
 
 		f.add(bStage);
 		f.add(bImport);
 		f.add(bCalc);
+		f.add(bReport);
 		f.add(bStop);
 		f.add(textField);
 
-		final int width = abstand * 6 + buttonWidth * 4;
+		final int width = abstand * 7 + buttonWidth * 5;
 		final int height = abstand * 4 + buttonHeight * 2;
 		f.setSize(width, height);
 		f.setLayout(null);
@@ -69,6 +72,8 @@ public class FinCtrlApp {
 					s += "IMPORT";
 				} else if (source == bCalc) {
 					s += "CALC";
+				} else if (source == bReport) {
+					s += "REPORT";
 				} else if (source == bStop) {
 					s += "STOP";
 				} else {
