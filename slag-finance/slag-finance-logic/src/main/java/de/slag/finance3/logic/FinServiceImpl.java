@@ -30,8 +30,11 @@ import de.slag.common.XiDataDao;
 import de.slag.common.base.AdmService;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.SlagProperties;
+import de.slag.common.base.event.Event;
+import de.slag.common.base.event.EventAction;
 import de.slag.common.base.event.EventBus;
 import de.slag.common.context.SlagContext;
+import de.slag.common.model.XiData;
 import de.slag.common.model.beans.SysLog;
 import de.slag.common.model.beans.SysLog.Severity;
 import de.slag.common.model.service.SysLogService;
@@ -40,6 +43,7 @@ import de.slag.finance.FinPriceDao;
 import de.slag.finance.FinSmaDao;
 import de.slag.finance.StockTitleDao;
 import de.slag.finance.api.AvailableProperties;
+import de.slag.finance.api.DataStagedEvent;
 import de.slag.finance.api.FinAdminSupport;
 import de.slag.finance.api.FinImportService;
 import de.slag.finance.api.FinService;
@@ -90,6 +94,21 @@ public class FinServiceImpl implements FinService {
 	@PostConstruct
 	public void setUp() {
 		FinAdminSupport.getSafe(AvailableProperties.ALLOVER_START_DATE);
+		EventAction action = new EventAction() {
+
+			@Override
+			public void run(Event event) {
+				if (!(event instanceof DataStagedEvent)) {
+					return;
+				}
+				final Collection<XiData> findAll = xiDataDao.findAll();
+				final List<String> collect = findAll.stream().map(xi -> xi.toString()).collect(Collectors.toList());
+				final String join = String.join(System.lineSeparator(), collect);
+				LOG.debug(String.format("staged data:%n%s", join));
+
+			}
+		};
+		EventBus.addAction(action);
 	}
 
 	private Collection<FinStageService> stageServices() {
@@ -157,16 +176,23 @@ public class FinServiceImpl implements FinService {
 			final String wkn = split[0];
 			final String isin = split[1];
 
-			StockTitle isinWkn = new StockTitle.Builder().wkn(wkn).isin(isin).build();
+			StockTitle isinWkn = new StockTitle.Builder().wkn(wkn)
+					.isin(isin)
+					.build();
 			LOG.info(String.format("add '%s'", isinWkn));
 			isinWkns.add(isinWkn);
 		});
 
-		final List<String> existingIsins = stockTitleDao.findAllIds().stream().map(id -> stockTitleDao.loadById(id))
-				.filter(isinWkn -> isinWkn.isPresent()).map(isinWkn -> isinWkn.get()).map(isinWkn -> isinWkn.getIsin())
+		final List<String> existingIsins = stockTitleDao.findAllIds()
+				.stream()
+				.map(id -> stockTitleDao.loadById(id))
+				.filter(isinWkn -> isinWkn.isPresent())
+				.map(isinWkn -> isinWkn.get())
+				.map(isinWkn -> isinWkn.getIsin())
 				.collect(Collectors.toList());
 
-		final List<StockTitle> isinWknToSave = isinWkns.stream().filter(g -> !existingIsins.contains(g.getIsin()))
+		final List<StockTitle> isinWknToSave = isinWkns.stream()
+				.filter(g -> !existingIsins.contains(g.getIsin()))
 				.collect(Collectors.toList());
 
 		LOG.info(String.format("isin-wkns to save: '%s'", isinWknToSave));
@@ -178,23 +204,25 @@ public class FinServiceImpl implements FinService {
 
 		final String safe = admService.getSafe(AvailableProperties.FINANCE_DATA_ISIN_NOTATIONS);
 		final String[] split = safe.split(";");
-		Arrays.stream(split).forEach(isinNotation -> {
-			final String[] split2 = isinNotation.split(":");
-			final String isin = split2[0];
-			final Optional<StockTitle> findBy = stockTitleDao.findBy(isin);
-			if(!findBy.isPresent()) {
-				return;
-			}
-			final StockTitle stockTitle = findBy.get();
-			stockTitle.setNotation(split2[1]);
-			stockTitleDao.save(stockTitle);
-		});
+		Arrays.stream(split)
+				.forEach(isinNotation -> {
+					final String[] split2 = isinNotation.split(":");
+					final String isin = split2[0];
+					final Optional<StockTitle> findBy = stockTitleDao.findBy(isin);
+					if (!findBy.isPresent()) {
+						return;
+					}
+					final StockTitle stockTitle = findBy.get();
+					stockTitle.setNotation(split2[1]);
+					stockTitleDao.save(stockTitle);
+				});
 
 	}
 
 	@Override
 	public void calcAllAdministered() {
-		final List<String> admKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS).split(";"));
+		final List<String> admKpis = Arrays.asList(FinAdminSupport.getSafe(AvailableProperties.CALC_KPIS)
+				.split(";"));
 
 		final Date parse;
 		try {
@@ -206,14 +234,16 @@ public class FinServiceImpl implements FinService {
 
 		final LocalDate alloverStartDate = DateUtils.toLocalDate(parse);
 
-		LocalDate current = LocalDate.now().minusDays(1);
+		LocalDate current = LocalDate.now()
+				.minusDays(1);
 		Collection<LocalDate> allDates = new ArrayList<>();
 		while (current.isAfter(alloverStartDate)) {
 			allDates.add(current);
 			current = current.minusDays(1);
 		}
 
-		final List<LocalDate> stockDays = allDates.stream().filter(day -> FinStockDateUtils.isStockDay(day))
+		final List<LocalDate> stockDays = allDates.stream()
+				.filter(day -> FinStockDateUtils.isStockDay(day))
 				.collect(Collectors.toList());
 
 		final List<Callable<?>> tasks = new ArrayList<>();
@@ -230,7 +260,9 @@ public class FinServiceImpl implements FinService {
 
 			final Collection<Long> allIds = stockTitleDao.findAllIds();
 
-			final List<StockTitle> isinWkns = allIds.stream().map(id -> stockTitleDao.loadById(id)).map(v -> v.get())
+			final List<StockTitle> isinWkns = allIds.stream()
+					.map(id -> stockTitleDao.loadById(id))
+					.map(v -> v.get())
 					.collect(Collectors.toList());
 
 			isinWkns.forEach(isinWkn -> {
@@ -248,7 +280,9 @@ public class FinServiceImpl implements FinService {
 
 		final long start = System.currentTimeMillis();
 
-		final Collection<Future<?>> futures = tasks.stream().map(executor::submit).collect(Collectors.toList());
+		final Collection<Future<?>> futures = tasks.stream()
+				.map(executor::submit)
+				.collect(Collectors.toList());
 
 		tasks.forEach(executor::submit);
 		executor.shutdown();
@@ -268,6 +302,7 @@ public class FinServiceImpl implements FinService {
 
 		EventBus.occure(new CalculationsDoneEvent(
 				"took (ms): " + DateUtils.millisecondsToHumanReadable(System.currentTimeMillis() - start)));
+		sysLogService.info(FinServiceImpl.class, "all administered calculated");
 
 	}
 
@@ -334,7 +369,9 @@ public class FinServiceImpl implements FinService {
 		});
 
 		ExecutorService exec = Executors.newScheduledThreadPool(4);
-		Collection<Future<?>> futures = tasks.stream().map(exec::submit).collect(Collectors.toList());
+		Collection<Future<?>> futures = tasks.stream()
+				.map(exec::submit)
+				.collect(Collectors.toList());
 
 		exec.shutdown();
 		try {
