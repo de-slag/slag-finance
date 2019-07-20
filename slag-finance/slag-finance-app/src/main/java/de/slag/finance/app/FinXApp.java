@@ -12,8 +12,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.Level;
 
 import de.slag.common.base.BaseException;
+import de.slag.common.base.SlagDevelopment;
 import de.slag.common.base.event.Event;
 import de.slag.common.base.event.EventAction;
 import de.slag.common.base.event.EventBus;
@@ -43,21 +45,23 @@ public class FinXApp {
 	private File controlDir;
 
 	public static void main(String[] args) {
-		LoggingUtils.activateLogging();
+		if (SlagDevelopment.isEnabled()) {
+			LoggingUtils.activateLogging(Level.DEBUG);
+		} else {
+			LoggingUtils.activateLogging();
+		}
 		final FinXApp app = new FinXApp();
 
 		try {
 			app.setUp();
-
-			// app.test();
 			app.run();
-
 			app.tearDown();
 		} catch (Throwable t) {
 			LOG.error("error execution", t);
 			System.exit(1);
 		}
 
+		LOG.info("teared down, exit");
 		System.exit(0);
 
 	}
@@ -84,16 +88,13 @@ public class FinXApp {
 
 		final StringBuilder sb = new StringBuilder();
 		sb.append("Admin: \n");
-		FinAdminSupport.getAll().forEach((key, value) -> sb.append(String.format("'%s': '%s'\n", key, value)));
+		FinAdminSupport.getAll()
+				.forEach((key, value) -> sb.append(String.format("'%s': '%s'\n", key, value)));
 		LOG.info(sb);
 
 		finService = SlagContext.getBean(FinService.class);
 
-		// FIXME hacky
-		// ((FinServiceImpl)finService).init();
-
 		systemLogDao = SlagContext.getBean(SysLogDao.class);
-
 
 		eventLogger = new StringBuffer();
 
@@ -108,23 +109,19 @@ public class FinXApp {
 		LOG.info("set up...done.");
 	}
 
-	public void test() {
-
-	}
-
 	public void tearDown() {
 		LOG.info("\n" + eventLogger.toString());
-		systemLogDao.findAll().forEach(entry -> LOG.info(entry));
+		systemLogDao.findAll()
+				.forEach(entry -> LOG.info(entry));
 	}
 
 	public void run() {
 		finService.assertIsinWkn();
 
-
 		while (true) {
-			
+
 			long startCycle = System.currentTimeMillis();
-			
+
 			if (isControl("STAGE")) {
 				finService.stageData();
 
@@ -139,14 +136,26 @@ public class FinXApp {
 
 			}
 
-			final Collection<SysLog> newLogs = systemLogDao.findAll().stream()
-					.filter(e -> e.getCreatedAt().getTime() > startCycle).collect(Collectors.toList());
+			final Collection<SysLog> newLogs = systemLogDao.findAll()
+					.stream()
+					.filter(e -> e.getCreatedAt()
+							.getTime() > startCycle)
+					.collect(Collectors.toList());
 
-			newLogs.stream().filter(e -> e.getSeverity() == Severity.INFO).forEach(e -> LOG.info(e));
 
-			newLogs.stream().filter(e -> e.getSeverity() == Severity.WARN).forEach(e -> LOG.warn(e));
+			newLogs.stream()
+					.filter(e -> e.getSeverity() == Severity.ERROR)
+					.forEach(e -> LOG.error(e));
 
-			newLogs.stream().filter(e -> e.getSeverity() == Severity.ERROR).forEach(e -> LOG.error(e));
+
+			newLogs.stream()
+					.filter(e -> e.getSeverity() == Severity.WARN)
+					.forEach(e -> LOG.warn(e));
+
+
+			newLogs.stream()
+					.filter(e -> e.getSeverity() == Severity.INFO)
+					.forEach(e -> LOG.info(e));
 
 			if (isControl("STOP")) {
 				LOG.info("stop program");
@@ -164,7 +173,8 @@ public class FinXApp {
 		Stream<File> stream = Arrays.stream(listFiles);
 		Predicate<? super File> predicate = file -> controlString.equals(file.getName());
 
-		Optional<File> findAny = stream.filter(predicate).findAny();
+		Optional<File> findAny = stream.filter(predicate)
+				.findAny();
 		if (!findAny.isPresent()) {
 			return false;
 		}
