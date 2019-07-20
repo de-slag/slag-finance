@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-model</artifactId>
-			<version>${project.version}</version>
+			<version>${slag-common-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.slag.finance</groupId>
