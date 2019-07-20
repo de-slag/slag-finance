@@ -12,7 +12,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<properties>
-		<slag-common-version>0.0.1-SNAPSHOT</slag-common-version>
+		<slag-common-version>0.0.1</slag-common-version>
 	</properties>
 	<modules>
 		<module>slag-finance-logic</module>
