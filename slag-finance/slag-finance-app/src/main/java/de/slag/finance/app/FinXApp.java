@@ -49,6 +49,7 @@ public class FinXApp {
 			LoggingUtils.activateLogging(Level.DEBUG);
 		} else {
 			LoggingUtils.activateLogging();
+			LoggingUtils.activateLogging(Level.DEBUG, "de.slag.finance");
 		}
 		final FinXApp app = new FinXApp();
 
