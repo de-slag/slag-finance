@@ -20,16 +20,15 @@
 			<artifactId>slag-common-model</artifactId>
 			<version>${slag-common-version}</version>
 		</dependency>
-		
-			<dependency>
+
+		<dependency>
 			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-base</artifactId>
-			<version>${slag-common-version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

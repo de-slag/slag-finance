@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 class OvDownloadRunnerTest {
 
@@ -17,7 +17,7 @@ class OvDownloadRunnerTest {
 
 	OvDownloadRunner runner;
 
-	@BeforeEach
+	@Before
 	public void setUp() throws IOException {
 		file = Files.createTempFile("test", ".csv").toFile();
 		runner = new OvDownloadRunner(new URL(url), file);
@@ -25,7 +25,7 @@ class OvDownloadRunnerTest {
 
 	@Test
 	void testCall() throws Exception {
-		Assertions.assertNotNull(runner.call());
-		Assertions.assertEquals(file.length(), 102400);
+		Assert.assertNotNull(runner.call());
+		Assert.assertEquals(file.length(), 102400);
 	}
 }

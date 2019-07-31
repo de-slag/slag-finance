@@ -1,13 +1,11 @@
 package de.slag.finance.model;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.NoSuchElementException;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 class FinPriceBuilderTest {
 
@@ -17,36 +15,23 @@ class FinPriceBuilderTest {
 
 	@Test
 	void testSuccess() {
-		assertNotNull(new FinPrice.Builder()
-				.isin(ISIN)
-				.date(DATE)
-				.close(VALUE)
-				.build());
+		Assert.assertNotNull(new FinPrice.Builder().isin(ISIN).date(DATE).close(VALUE).build());
 
 	}
 
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	void testDate() {
-		Assertions.assertThrows(NoSuchElementException.class, () -> new FinPrice.Builder()
-				.isin(ISIN)
-				.close(VALUE)
-				.build());
+		new FinPrice.Builder().isin(ISIN).close(VALUE).build();
 	}
 
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	void testValue() {
-		Assertions.assertThrows(NoSuchElementException.class, () -> new FinPrice.Builder()
-				.isin(ISIN)
-				.date(DATE)
-				.build());
+		new FinPrice.Builder().isin(ISIN).date(DATE).build();
 	}
 
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	void testIsin() {
-		Assertions.assertThrows(NoSuchElementException.class, () -> new FinPrice.Builder()
-				.close(VALUE)
-				.date(DATE)
-				.build());
+		new FinPrice.Builder().close(VALUE).date(DATE).build();
 	}
 
 }
