@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-class OvDownloadRunnerTest {
+public class OvDownloadRunnerTest {
 
 	String url = "http://speedtest.ftp.otenet.gr/files/test100k.db";
 
@@ -24,7 +24,7 @@ class OvDownloadRunnerTest {
 	}
 
 	@Test
-	void testCall() throws Exception {
+	public void testCall() throws Exception {
 		Assert.assertNotNull(runner.call());
 		Assert.assertEquals(file.length(), 102400);
 	}

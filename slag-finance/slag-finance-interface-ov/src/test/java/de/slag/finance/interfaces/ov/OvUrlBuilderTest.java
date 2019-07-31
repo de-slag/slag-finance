@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-class OvUrlBuilderTest {
+public class OvUrlBuilderTest {
 	
 	OvUrlBuilder ovUrlBuilder;
 	
@@ -16,12 +16,12 @@ class OvUrlBuilderTest {
 	
 	
 	@Before
-	void setUp() {
+	public void setUp() {
 		ovUrlBuilder = new OvUrlBuilder();
 	}
 
 	@Test
-	void testBuild() throws MalformedURLException {
+	public void testBuild() throws MalformedURLException {
 		ovUrlBuilder.date(new Date(0))
 			.baseUrl("http://xy.z/abc")
 			.notation("1234");
