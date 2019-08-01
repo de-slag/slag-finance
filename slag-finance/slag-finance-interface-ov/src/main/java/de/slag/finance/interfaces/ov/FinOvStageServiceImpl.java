@@ -20,8 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import de.slag.common.XiDataDao;
-import de.slag.common.base.AdmService;
 import de.slag.common.base.BaseException;
+import de.slag.common.base.adm.AdmService;
 import de.slag.common.base.event.Event;
 import de.slag.common.base.event.EventAction;
 import de.slag.common.base.event.EventBus;
