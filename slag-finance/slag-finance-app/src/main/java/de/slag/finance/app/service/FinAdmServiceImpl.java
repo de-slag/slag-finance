@@ -14,7 +14,7 @@ import de.slag.common.base.adm.AdmService;
 @Service
 public class FinAdmServiceImpl extends AbstractAdmServiceImpl implements AdmService {
 
-	public FinAdmServiceImpl() {
+	public FinAdmServiceImpl() {		
 		super(() -> {
 			final Properties configProperties = SlagProperties.getConfigProperties();
 			final Set<Object> keySet = configProperties.keySet();
