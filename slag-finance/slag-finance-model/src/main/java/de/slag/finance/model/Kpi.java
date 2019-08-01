@@ -4,6 +4,8 @@ public enum Kpi {
 	
 	PRICE,
 	
-	SMA
+	SMA,
+	
+	WMA
 
 }
