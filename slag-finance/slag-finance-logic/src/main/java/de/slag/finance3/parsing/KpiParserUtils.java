@@ -1,4 +1,4 @@
-package de.slag.finance3;
+package de.slag.finance3.parsing;
 
 import java.util.HashMap;
 import java.util.Map;

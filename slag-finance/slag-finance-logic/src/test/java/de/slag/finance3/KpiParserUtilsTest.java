@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.slag.finance.model.Kpi;
+import de.slag.finance3.parsing.KpiParserResult;
+import de.slag.finance3.parsing.KpiParserUtils;
 
 public class KpiParserUtilsTest {
 
