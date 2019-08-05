@@ -22,6 +22,7 @@
 		<module>slag-finance-api</module>
 		<module>slag-finance-interface-ov</module>
 		<module>slag-finance-interface-av</module>
+		<module>slag-finance-ti</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
