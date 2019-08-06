@@ -49,15 +49,21 @@
 				<artifactId>slag-common-logging</artifactId>
 				<version>${slag-common-version}</version>
 			</dependency>
-			
-				<dependency>
+
+			<dependency>
 				<groupId>de.slag.common</groupId>
 				<artifactId>slag-common-database</artifactId>
 				<version>${slag-common-version}</version>
 			</dependency>
-			
-			
-			
+
+			<dependency>
+				<groupId>de.slag.common</groupId>
+				<artifactId>slag-common-api</artifactId>
+				<version>${slag-common-version}</version>
+			</dependency>
+
+
+
 		</dependencies>
 	</dependencyManagement>
 </project>
