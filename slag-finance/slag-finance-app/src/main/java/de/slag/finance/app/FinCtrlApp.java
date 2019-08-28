@@ -13,8 +13,6 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.StringUtils;
 
 import de.slag.common.base.BaseException;
-import de.slag.common.base.SlagProperties;
-import de.slag.finance.api.AvailableProperties;
 
 public class FinCtrlApp {
 

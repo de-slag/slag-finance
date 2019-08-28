@@ -6,9 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.stereotype.Service;
 
-import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
 import de.slag.common.utils.CsvUtils;
 import de.slag.finance.deprecated.FinDataPoint;

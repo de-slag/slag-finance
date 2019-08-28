@@ -9,8 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import de.slag.common.XiDataDao;
-import de.slag.finance.FinPriceDao;
+import de.slag.common.api.dao.XiDataDao;
+import de.slag.finance.api.FinPriceDao;
 
 @Service
 public class FinReportServiceImpl implements FinReportService {

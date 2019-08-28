@@ -13,14 +13,14 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.slag.common.XiDataDao;
+import de.slag.common.api.dao.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.event.EventBus;
-import de.slag.common.model.XiData;
+import de.slag.common.model.beans.XiData;
 import de.slag.common.utils.CsvUtils;
-import de.slag.finance.StockTitleDao;
 import de.slag.finance.api.Constants;
 import de.slag.finance.api.DataStagedEvent;
+import de.slag.finance.api.StockTitleDao;
 import de.slag.finance.model.StockTitle;
 
 public class FinRawDataStageRunner implements Runnable {

@@ -5,11 +5,11 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import de.slag.common.Dao;
+import de.slag.common.api.Dao;
+import de.slag.common.api.dao.SysLogDao;
+import de.slag.common.api.service.SysLogService;
 import de.slag.common.model.beans.SysLog;
 import de.slag.common.model.beans.SysLog.Severity;
-import de.slag.common.model.dao.SysLogDao;
-import de.slag.common.model.service.SysLogService;
 
 @Service
 public class SysLogServiceImpl implements SysLogService {

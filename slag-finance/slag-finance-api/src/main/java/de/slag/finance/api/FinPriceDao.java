@@ -1,4 +1,4 @@
-package de.slag.finance;
+package de.slag.finance.api;
 
 import java.util.Collection;
 import java.util.Date;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.slag.common.Dao;
+import de.slag.common.api.Dao;
 import de.slag.common.base.BaseException;
 import de.slag.finance.model.FinPrice;
 

@@ -1,7 +1,6 @@
 package de.slag.finance.importer.deprecated;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,16 +14,13 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
 
 import de.slag.common.base.BaseException;
 import de.slag.common.context.SlagContext;
 import de.slag.common.utils.CsvUtils;
 import de.slag.common.utils.DateUtils;
-import de.slag.finance.deprecated.FinDataPoint;
 import de.slag.finance.deprecated.FinDataPointFactory;
 import de.slag.finance.deprecated.FinDataPointService;
-import de.slag.finance.model.Kpi;
 
 //@Service
 public class RawDataImportServiceImpl implements RawDataImportService {

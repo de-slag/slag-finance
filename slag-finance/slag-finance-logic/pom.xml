@@ -44,6 +44,11 @@
 
 		<dependency>
 			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-logging</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -52,7 +57,7 @@
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>

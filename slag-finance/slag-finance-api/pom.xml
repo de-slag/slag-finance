@@ -18,6 +18,10 @@
 			<artifactId>slag-common-base</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>de.slag.finance</groupId>
 			<artifactId>slag-finance-model</artifactId>
 			<version>${project.version}</version>

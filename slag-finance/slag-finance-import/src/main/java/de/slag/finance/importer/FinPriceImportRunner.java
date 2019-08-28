@@ -12,11 +12,11 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.slag.common.XiDataDao;
+import de.slag.common.api.dao.XiDataDao;
 import de.slag.common.base.BaseException;
 import de.slag.common.base.event.EventBus;
-import de.slag.common.model.XiData;
-import de.slag.finance.FinPriceDao;
+import de.slag.common.model.beans.XiData;
+import de.slag.finance.api.FinPriceDao;
 import de.slag.finance.model.FinPrice;
 import de.slag.finance3.events.DataImportedEvent;
 

@@ -25,6 +25,10 @@
 		</dependency>
 		<dependency>
 			<groupId>de.slag.common</groupId>
+			<artifactId>slag-common-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.slag.common</groupId>
 			<artifactId>slag-common-utils</artifactId>
 		</dependency>
 		<dependency>
